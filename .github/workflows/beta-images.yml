@@ -24,8 +24,7 @@ jobs:
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v2
-      - name: Get Version
-        id: version
+      - name: Get Version 16
         run: |
           export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
@@ -48,8 +47,7 @@ jobs:
              -t truemark/node:beta-${NODE_VERSION}-alpine \
              -t truemark/node:beta-16-alpine \
              .
-      - name: Get Version
-        id: version
+      - name: Get Version 18
         run: |
           export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
