@@ -1,7 +1,8 @@
 # Node Docker Images
 
 This project produces a docker image with minimal layers containing the latest
-Node LTS release along with pnpm and esbuild for linux/amd64 and linux/arm64.
+Node LTS release along with pnpm, esbuild and typescript for linux/amd64 and 
+linux/arm64.
 
 # How do I use this docker image?
 
