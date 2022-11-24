@@ -16,8 +16,8 @@ docker buildx build \
   --platform linux/arm64,linux/amd64 \
   --builder beta \
   --build-arg NODE_VERSION="${NODE_VERSION}" \
-  -f Dockerfile \
-  -t truemark/node:beta-${NODE_VERSION} \
-  -t truemark/node:beta-16 \
-  -t truemark/node:beta \
+  -f alpine.Dockerfile \
+  -t truemark/node:beta-${NODE_VERSION}-alpine \
+  -t truemark/node:beta-16-alpine \
+  -t truemark/node:beta-alpine \
   .

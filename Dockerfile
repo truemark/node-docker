@@ -3,7 +3,7 @@ ARG NODE_VERSION
 ARG TARGETARCH
 RUN yum install -y tar gzip
 RUN rm -rf /usr/local/*
-RUN curl -sSL "https://nodejs.org/dist/latest-v$(echo ${NODE_VERSION} | sed "s/\..*//g").x/node-v${NODE_VERSION}-linux-${TARGETARCH}.tar.gz" -o - | tar -zxf - -C /usr/local --strip-component 1
+RUN curl -sSL "https://nodejs.org/dist/latest-v$(echo ${NODE_VERSION} | sed "s/\..*//g").x/node-v${NODE_VERSION}-linux-${TARGETARCH/amd64/x64}.tar.gz" -o - | tar -zxf - -C /usr/local --strip-component 1
 RUN rm -f /usr/local/*.md
 RUN npm install -g pnpm esbuild
 
