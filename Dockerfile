@@ -1,4 +1,4 @@
-FROM amazonlinux:2 AS builder
+FROM amazonlinux:2022 AS builder
 ARG NODE_VERSION
 ARG TARGETARCH
 RUN yum install -y tar gzip
