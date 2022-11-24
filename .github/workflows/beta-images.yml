@@ -41,7 +41,7 @@ jobs:
              -t truemark/node:beta-16 \
              -t truemark/node:beta \
              .
-          ocker buildx build \
+          docker buildx build \
              --push \
              --platform linux/arm64,linux/amd64 \
               --build-arg NODE_VERSION="${NODE_VERSION}" \
