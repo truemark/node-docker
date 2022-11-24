@@ -11,9 +11,10 @@ For glibc based linux distributions
 COPY --from=truemark/node:latest /usr/local/ /usr/local/
 ```
 
-For musl based linux distributions
+For alpine linux
 ```Dockerfile
 COPY --from=truemark/node:alpine /usr/local/ /usr/local/
+RUN apk add --no-cache libstdc++
 ```
 
 ## Maintainers
