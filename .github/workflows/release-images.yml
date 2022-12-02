@@ -10,7 +10,7 @@ on:
     - cron: '0 16 * * 1'
 
 jobs:
-  build:
+  build-16-alpine-317:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -35,21 +35,32 @@ jobs:
       - name: Build 16
         run: |
           docker buildx build \
-             --push \
-             --platform linux/arm64,linux/amd64 \
-              --build-arg NODE_VERSION="${NODE_VERSION}" \
-             -f Dockerfile \
-             -t truemark/node:${NODE_VERSION} \
-             -t truemark/node:16 \
-             .
-          docker buildx build \
-             --push \
-             --platform linux/arm64,linux/amd64 \
-              --build-arg NODE_VERSION="${NODE_VERSION}" \
-             -f alpine.Dockerfile \
-             -t truemark/node:${NODE_VERSION}-alpine \
-             -t truemark/node:16-alpine \
-             .
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=alpine \
+            --build-arg OS_VERSION=3.17 \
+            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            -f Dockerfile \
+            -t truemark/node:${NODE_VERSION}-alpine-3.17 \
+            -t truemark/node:16-alpine-3.17 \
+            .
+  build-18-alpine-317:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
       - name: Get Version 18
         run: |
           export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
@@ -58,22 +69,556 @@ jobs:
       - name: Build 18
         run: |
           docker buildx build \
-             --push \
-             --platform linux/arm64,linux/amd64 \
-              --build-arg NODE_VERSION="${NODE_VERSION}" \
-             -f Dockerfile \
-             -t truemark/node:${NODE_VERSION} \
-             -t truemark/node:18 \
-             -t truemark/node:latest \
-             .
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=alpine \
+            --build-arg OS_VERSION=3.17 \
+            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            -f Dockerfile \
+            -t truemark/node:${NODE_VERSION}-alpine-3.17 \
+            -t truemark/node:18-alpine-3.17 \
+            .
+  build-16-alpine-316:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Get Version 16
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+      - name: Build 16
+        run: |
           docker buildx build \
-             --push \
-             --platform linux/arm64,linux/amd64 \
-              --build-arg NODE_VERSION="${NODE_VERSION}" \
-             -f alpine.Dockerfile \
-             -t truemark/node:${NODE_VERSION}-alpine \
-             -t truemark/node:18-alpine \
-             -t truemark/node:alpine \
-             .
-      - name: Keepalive
-        uses: gautamkrishnar/keepalive-workflow@v1
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=alpine \
+            --build-arg OS_VERSION=3.16 \
+            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            -f Dockerfile \
+            -t truemark/node:${NODE_VERSION}-alpine-3.16 \
+            -t truemark/node:16-alpine-3.16 \
+            .
+  build-18-alpine-316:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Get Version 18
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+      - name: Build 18
+        run: |
+          docker buildx build \
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=alpine \
+            --build-arg OS_VERSION=3.16 \
+            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            -f Dockerfile \
+            -t truemark/node:${NODE_VERSION}-alpine-3.16 \
+            -t truemark/node:18-alpine-3.16 \
+            .
+  build-16-ubuntu-jammy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Get Version 16
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+      - name: Build 16
+        run: |
+          docker buildx build \
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=ubuntu \
+            --build-arg OS_VERSION=jammy \
+            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            -f Dockerfile \
+            -t truemark/node:${NODE_VERSION}-ubuntu-jammy \
+            -t truemark/node:16-ubuntu-jammy \
+            .
+  build-18-ubuntu-jammy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Get Version 18
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+      - name: Build 18
+        run: |
+          docker buildx build \
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=ubuntu \
+            --build-arg OS_VERSION=jammy \
+            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            -f Dockerfile \
+            -t truemark/node:${NODE_VERSION}-ubuntu-jammy \
+            -t truemark/node:18-ubuntu-jammy \
+            .
+  build-16-ubuntu-focal:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Get Version 16
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+      - name: Build 16
+        run: |
+          docker buildx build \
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=ubuntu \
+            --build-arg OS_VERSION=focal \
+            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            -f Dockerfile \
+            -t truemark/node:${NODE_VERSION}-ubuntu-focal \
+            -t truemark/node:16-ubuntu-focal \
+            .
+  build-18-ubuntu-focal:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Get Version 18
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+      - name: Build 18
+        run: |
+          docker buildx build \
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=ubuntu \
+            --build-arg OS_VERSION=focal \
+            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            -f Dockerfile \
+            -t truemark/node:${NODE_VERSION}-ubuntu-focal \
+            -t truemark/node:18-ubuntu-focal \
+            .
+  build-16-debian-bookworm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Get Version 16
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+      - name: Build 16
+        run: |
+          docker buildx build \
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=debian \
+            --build-arg OS_VERSION=bookworm \
+            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            -f Dockerfile \
+            -t truemark/node:${NODE_VERSION}-debian-bookworm \
+            -t truemark/node:16-debian-bookworm \
+            .
+  build-18-debian-bookworm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Get Version 18
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+      - name: Build 18
+        run: |
+          docker buildx build \
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=debian \
+            --build-arg OS_VERSION=bookworm \
+            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            -f Dockerfile \
+            -t truemark/node:${NODE_VERSION}-debian-bookworm \
+            -t truemark/node:18-debian-bookworm \
+            .
+  build-16-debian-bullseye:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Get Version 16
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+      - name: Build 16
+        run: |
+          docker buildx build \
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=debian \
+            --build-arg OS_VERSION=bullseye \
+            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            -f Dockerfile \
+            -t truemark/node:${NODE_VERSION}-debian-bullseye \
+            -t truemark/node:16-debian-bullseye \
+            .
+  build-18-debian-bullseye:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Get Version 18
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+      - name: Build 18
+        run: |
+          docker buildx build \
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=debian \
+            --build-arg OS_VERSION=bullseye \
+            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            -f Dockerfile \
+            -t truemark/node:${NODE_VERSION}-debian-bullseye \
+            -t truemark/node:18-debian-bullseye \
+            .
+  build-16-debian-buster:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Get Version 16
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+      - name: Build 16
+        run: |
+          docker buildx build \
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=debian \
+            --build-arg OS_VERSION=buster \
+            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            -f Dockerfile \
+            -t truemark/node:${NODE_VERSION}-debian-buster \
+            -t truemark/node:16-debian-buster \
+            .
+  build-18-debian-buster:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Get Version 18
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+      - name: Build 18
+        run: |
+          docker buildx build \
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=debian \
+            --build-arg OS_VERSION=buster \
+            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            -f Dockerfile \
+            -t truemark/node:${NODE_VERSION}-debian-buster \
+            -t truemark/node:18-debian-buster \
+            .
+  build-16-amazonlinux-2022:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Get Version 16
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+      - name: Build 16
+        run: |
+          docker buildx build \
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=amazonlinux \
+            --build-arg OS_VERSION=2022 \
+            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            -f Dockerfile \
+            -t truemark/node:${NODE_VERSION}-amazonlinux-2022 \
+            -t truemark/node:16-amazonlinux-2022 \
+            .
+  build-18-amazonlinux-2022:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Get Version 18
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+      - name: Build 18
+        run: |
+          docker buildx build \
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=amazonlinux \
+            --build-arg OS_VERSION=2022 \
+            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            -f Dockerfile \
+            -t truemark/node:${NODE_VERSION}-amazonlinux-2022 \
+            -t truemark/node:18-amazonlinux-2022 \
+            .
+  build-16-amazonlinux-2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Get Version 16
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+      - name: Build 16
+        run: |
+          docker buildx build \
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=amazonlinux \
+            --build-arg OS_VERSION=2 \
+            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            -f Dockerfile \
+            -t truemark/node:${NODE_VERSION}-amazonlinux-2 \
+            -t truemark/node:16-amazonlinux-2 \
+            .
+  build-18-amazonlinux-2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Get Version 18
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+      - name: Build 18
+        run: |
+          docker buildx build \
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=amazonlinux \
+            --build-arg OS_VERSION=2 \
+            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            -f Dockerfile \
+            -t truemark/node:${NODE_VERSION}-amazonlinux-2 \
+            -t truemark/node:18-amazonlinux-2 \
+            .
