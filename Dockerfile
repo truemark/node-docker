@@ -6,7 +6,7 @@ ARG NODE_VERSION
 RUN if [ "${OS_NAME}" = "debian" ] || [ "${OS_NAME}" = "ubuntu" ]; then \
       apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -qq curl ca-certificates python3 gcc g++ make; \
     elif [ "${OS_NAME}" = "amazonlinux" ]; then \
-      yum install -y -q tar gzip gcc g++ make; \
+      yum install -y -q tar gzip gcc gcc-c++ make python3; \
     elif [ "${OS_NAME}" = "alpine" ]; then \
       apk add curl python3 gcc make g++ linux-headers; \
     fi
