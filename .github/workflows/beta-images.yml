@@ -11,11 +11,16 @@ permissions:
   contents: write
 
 jobs:
-  prep:
+  build-16:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Get Version 16
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -32,22 +37,14 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
-        id: buildx
         uses: truemark/aws-buildx-remote-docker-instance-action@v2
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
           instance-profile: "${{ vars.INSTANCE_PROFILE }}"
           region: "us-east-2"
-  build-16:
-    needs: prep
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get Version 16
-        run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
-          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
-          echo "Version: ${NODE_VERSION}"
+      - name: Verify
+        run: docker buildx ls
       - name: Build 16 Alpine 3.17
         run: |
           docker buildx build \
@@ -357,14 +354,39 @@ jobs:
           IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-alpine-3.17" ARCH="amd64" FILE="node-16-alpine-3.17-amd64.tar.gz" ./getlayer.sh
           IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-alpine-3.17" ARCH="arm64" FILE="node-16-alpine-3.17-arm64.tar.gz" ./getlayer.sh
   build-18:
-    needs: prep
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Get Version 18
         run: |
           export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
+          aws-region: "us-east-1"
+      - name: Login to ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registry-type: public
+      - name: Setup Buildx Remote Docker
+        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        with:
+          security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
+          subnet-id: "${{ vars.SUBNET_ID }}"
+          instance-profile: "${{ vars.INSTANCE_PROFILE }}"
+          region: "us-east-2"
+      - name: Verify
+        run: docker buildx ls
       - name: Build 18 Alpine 3.17
         run: |
           docker buildx build \
