@@ -37,7 +37,7 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@5a54d4b6ec45d196c46ae9fdc9dac106c18e65e7
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -379,7 +379,7 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@5a54d4b6ec45d196c46ae9fdc9dac106c18e65e7
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
