@@ -7,615 +7,685 @@ on:
       - develop
 
 jobs:
-  build-16-alpine-317:
+  build-16:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: arm64
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v2
       - name: Get Version 16
         run: |
           export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
-      - name: Build 16
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
+          aws-region: "us-east-1"
+      - name: Login to ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registry-type: public
+      - name: Setup Buildx Remote Docker
+        id: buildx
+        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        with:
+          security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
+          subnet-id: "${{ vars.SUBNET_ID }}"
+          instance-profile: "${{ vars.INSTANCE_PROFILE }}"
+          region: "us-east-2"
+      - name: Build 16 Alpine 3.17
         run: |
           docker buildx build \
             --push \
             --platform linux/arm64,linux/amd64 \
             --build-arg OS_NAME=alpine \
             --build-arg OS_VERSION=3.17 \
-            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            --build-arg NODE_VERSION="${{ env.NODE_VERSION }}" \
             -f Dockerfile \
-            -t truemark/node:beta-${NODE_VERSION}-alpine-3.17 \
+            -t truemark/node:beta-${{ env.NODE_VERSION }}-alpine-3.17 \
             -t truemark/node:beta-16-alpine-3.17 \
             .
-  build-18-alpine-317:
+      - name: Copy beta-${{ env.NODE_VERSION }}-alpine-3.17 to ECR
+        uses: truemark/skopeo-copy-action@v1
+        with:
+          src-image: "docker://truemark/node:beta-${{ env.NODE_VERSION }}-alpine-3.17"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-${{ env.NODE_VERSION }}-alpine-3.17"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Copy beta-16-alpine-3.17 to ECR
+        uses: truemark/skopeo-copy-action@v1
+        with:
+          src-image: "docker://truemark/node:beta-16-alpine-3.17"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-16-alpine-3.17"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Build 16 Alpine 3.16
+        run: |
+          docker buildx build \
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=alpine \
+            --build-arg OS_VERSION=3.16 \
+            --build-arg NODE_VERSION="${{ env.NODE_VERSION }}" \
+            -f Dockerfile \
+            -t truemark/node:beta-${{ env.NODE_VERSION }}-alpine-3.16 \
+            -t truemark/node:beta-16-alpine-3.16 \
+            .
+      - name: Copy beta-${{ env.NODE_VERSION }}-alpine-3.16 to ECR
+        uses: truemark/skopeo-copy-action@v1
+        with:
+          src-image: "docker://truemark/node:beta-${{ env.NODE_VERSION }}-alpine-3.16"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-${{ env.NODE_VERSION }}-alpine-3.16"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Copy beta-16-alpine-3.16 to ECR
+        uses: truemark/skopeo-copy-action@v1
+        with:
+          src-image: "docker://truemark/node:beta-16-alpine-3.16"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-16-alpine-3.16"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Build 16 Ubuntu Jammy
+        run: |
+          docker buildx build \
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=ubuntu \
+            --build-arg OS_VERSION=jammy \
+            --build-arg NODE_VERSION="${{ env.NODE_VERSION }}" \
+            -f Dockerfile \
+            -t truemark/node:beta-${{ env.NODE_VERSION }}-ubuntu-jammy \
+            -t truemark/node:beta-16-ubuntu-jammy \
+            .
+      - name: Copy beta-${{ env.NODE_VERSION }}-ubuntu-jammy to ECR
+        uses: truemark/skopeo-copy-action@v1
+        with:
+          src-image: "docker://truemark/node:beta-${{ env.NODE_VERSION }}-ubuntu-jammy"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-${{ env.NODE_VERSION }}-ubuntu-jammy"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Copy beta-16-ubuntu-jammy to ECR
+        uses: truemark/skopeo-copy-action@v1
+        with:
+          src-image: "docker://truemark/node:beta-16-ubuntu-jammy"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-16-ubuntu-jammy"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Build 16 Ubuntu Focal
+        run: |
+          docker buildx build \
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=ubuntu \
+            --build-arg OS_VERSION=focal \
+            --build-arg NODE_VERSION="${{ env.NODE_VERSION }}" \
+            -f Dockerfile \
+            -t truemark/node:beta-${{ env.NODE_VERSION }}-ubuntu-focal \
+            -t truemark/node:beta-16-ubuntu-focal \
+            .
+      - name: Copy beta-${{ env.NODE_VERSION }}-ubuntu-focal to ECR
+        uses: truemark/skopeo-copy-action@v1
+        with:
+          src-image: "docker://truemark/node:beta-${{ env.NODE_VERSION }}-ubuntu-focal"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-${{ env.NODE_VERSION }}-ubuntu-focal"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Copy beta-16-ubuntu-focal to ECR
+        uses: truemark/skopeo-copy-action@v1
+        with:
+          src-image: "docker://truemark/node:beta-16-ubuntu-focal"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-16-ubuntu-focal"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Build 16 Debian Bookworm
+        run: |
+          docker buildx build \
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=debian \
+            --build-arg OS_VERSION=bookworm \
+            --build-arg NODE_VERSION="${{ env.NODE_VERSION }}" \
+            -f Dockerfile \
+            -t truemark/node:beta-${{ env.NODE_VERSION }}-debian-bookworm \
+            -t truemark/node:beta-16-debian-bookworm \
+            .
+      - name: Copy beta-${{ env.NODE_VERSION }}-debian-bookworm to ECR
+        uses: truemark/skopeo-copy-action@v1
+        with:
+          src-image: "docker://truemark/node:beta-${{ env.NODE_VERSION }}-debian-bookworm"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-${{ env.NODE_VERSION }}-debian-bookworm"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Copy beta-16-debian-bookworm to ECR
+        uses: truemark/skopeo-copy-action@v1
+        with:
+          src-image: "docker://truemark/node:beta-16-debian-bookworm"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-16-debian-bookworm"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Build 16 Debian Bullseye
+        run: |
+          docker buildx build \
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=debian \
+            --build-arg OS_VERSION=bullseye \
+            --build-arg NODE_VERSION="${{ env.NODE_VERSION }}" \
+            -f Dockerfile \
+            -t truemark/node:beta-${{ env.NODE_VERSION }}-debian-bullseye \
+            -t truemark/node:beta-16-debian-bullseye \
+            .
+      - name: Copy beta-${{ env.NODE_VERSION }}-debian-bullseye to ECR
+        uses: truemark/skopeo-copy-action@v1
+        with:
+          src-image: "docker://truemark/node:beta-${{ env.NODE_VERSION }}-debian-bullseye"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-${{ env.NODE_VERSION }}-debian-bullseye"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Copy beta-16-debian-bullseye to ECR
+        uses: truemark/skopeo-copy-action@v1
+        with:
+          src-image: "docker://truemark/node:beta-16-debian-bullseye"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-16-debian-bullseye"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Build 16 Amazon Linux 2023
+        run: |
+          docker buildx build \
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=amazonlinux \
+            --build-arg OS_VERSION=2023 \
+            --build-arg NODE_VERSION="${{ env.NODE_VERSION }}" \
+            -f Dockerfile \
+            -t truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2023 \
+            -t truemark/node:beta-16-amazonlinux-2023 \
+            .
+      - name: Copy beta-${{ env.NODE_VERSION }}-amazonlinux-2023 to ECR
+        uses: truemark/skopeo-copy-action@v1
+        with:
+          src-image: "docker://truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2023"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2023"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Copy beta-16-amazonlinux-2023 to ECR
+        uses: truemark/skopeo-copy-action@v1
+        with:
+          src-image: "docker://truemark/node:beta-16-amazonlinux-2023"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-16-amazonlinux-2023"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Build 16 Amazon Linux 2022
+        run: |
+          docker buildx build \
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=amazonlinux \
+            --build-arg OS_VERSION=2022 \
+            --build-arg NODE_VERSION="${{ env.NODE_VERSION }}" \
+            -f Dockerfile \
+            -t truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2022 \
+            -t truemark/node:beta-16-amazonlinux-2022 \
+            .
+      - name: Copy beta-${{ env.NODE_VERSION }}-amazonlinux-2022 to ECR
+        uses: truemark/skopeo-copy-action@v1
+        with:
+          src-image: "docker://truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2022"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2022"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Copy beta-16-amazonlinux-2022 to ECR
+        uses: truemark/skopeo-copy-action@v1
+        with:
+          src-image: "docker://truemark/node:beta-16-amazonlinux-2022"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-16-amazonlinux-2022"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Build 16 Amazon Linux 2
+        run: |
+          docker buildx build \
+            --push \
+            --platform linux/arm64,linux/amd64 \
+            --build-arg OS_NAME=amazonlinux \
+            --build-arg OS_VERSION=2 \
+            --build-arg NODE_VERSION="${{ env.NODE_VERSION }}" \
+            -f Dockerfile \
+            -t truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2 \
+            -t truemark/node:beta-16-amazonlinux-2 \
+            .
+      - name: Copy beta-${{ env.NODE_VERSION }}-amazonlinux-2 to ECR
+        uses: truemark/skopeo-copy-action@v1
+        with:
+          src-image: "docker://truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Copy beta-16-amazonlinux-2 to ECR
+        uses: truemark/skopeo-copy-action@v1
+        with:
+          src-image: "docker://truemark/node:beta-16-amazonlinux-2"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-16-amazonlinux-2"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Package
+        run: |
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2" ARCH="amd64" FILE="node-16-amazonlinux-2-amd64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2" ARCH="arm64" FILE="node-16-amazonlinux-2-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2022" ARCH="amd64" FILE="node-16-amazonlinux-2022-amd64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2022" ARCH="arm64" FILE="node-16-amazonlinux-2022-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2023" ARCH="amd64" FILE="node-16-amazonlinux-2023-amd64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2023" ARCH="arm64" FILE="node-16-amazonlinux-2023-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-ubuntu-focal" ARCH="amd64" FILE="node-16-ubuntu-focal-amd64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-ubuntu-focal" ARCH="arm64" FILE="node-16-ubuntu-focal-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-ubuntu-jammy" ARCH="amd64" FILE="node-16-ubuntu-jammy-amd64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-ubuntu-jammy" ARCH="arm64" FILE="node-16-ubuntu-jammy-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-debian-bookworm" ARCH="amd64" FILE="node-16-debian-bookworm-amd64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-debian-bookworm" ARCH="arm64" FILE="node-16-debian-bookworm-arm64.tar.gz" ./getlayer.sh    
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-debian-bullseye" ARCH="amd64" FILE="node-16-debian-bullseye-amd64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-debian-bullseye" ARCH="arm64" FILE="node-16-debian-bullseye-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-alpine-3.16" ARCH="amd64" FILE="node-16-alpine-3.16-amd64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-alpine-3.16" ARCH="arm64" FILE="node-16-alpine-3.16-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-alpine-3.17" ARCH="amd64" FILE="node-16-alpine-3.17-amd64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-alpine-3.17" ARCH="arm64" FILE="node-16-alpine-3.17-arm64.tar.gz" ./getlayer.sh
+  build-18:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: arm64
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v2
       - name: Get Version 18
         run: |
           export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
-      - name: Build 18
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
+          aws-region: "us-east-1"
+      - name: Login to ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registry-type: public
+      - name: Setup Buildx Remote Docker
+        id: buildx
+        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        with:
+          security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
+          subnet-id: "${{ vars.SUBNET_ID }}"
+          instance-profile: "${{ vars.INSTANCE_PROFILE }}"
+          region: "us-east-2"
+      - name: Build 18 Alpine 3.17
         run: |
           docker buildx build \
             --push \
             --platform linux/arm64,linux/amd64 \
             --build-arg OS_NAME=alpine \
             --build-arg OS_VERSION=3.17 \
-            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            --build-arg NODE_VERSION="${{ env.NODE_VERSION }}" \
             -f Dockerfile \
-            -t truemark/node:beta-${NODE_VERSION}-alpine-3.17 \
+            -t truemark/node:beta-${{ env.NODE_VERSION }}-alpine-3.17 \
             -t truemark/node:beta-18-alpine-3.17 \
             .
-  build-16-alpine-316:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
+      - name: Copy beta-${{ env.NODE_VERSION }}-alpine-3.17 to ECR
+        uses: truemark/skopeo-copy-action@v1
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+          src-image: "docker://truemark/node:beta-${{ env.NODE_VERSION }}-alpine-3.17"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-${{ env.NODE_VERSION }}-alpine-3.17"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Copy beta-18-alpine-3.17 to ECR
+        uses: truemark/skopeo-copy-action@v1
         with:
-          platforms: arm64
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Get Version 16
-        run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
-          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
-          echo "Version: ${NODE_VERSION}"
-      - name: Build 16
+          src-image: "docker://truemark/node:beta-18-alpine-3.17"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-18-alpine-3.17"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Build 18 Alpine 3.16
         run: |
           docker buildx build \
             --push \
             --platform linux/arm64,linux/amd64 \
             --build-arg OS_NAME=alpine \
             --build-arg OS_VERSION=3.16 \
-            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            --build-arg NODE_VERSION="${{ env.NODE_VERSION }}" \
             -f Dockerfile \
-            -t truemark/node:beta-${NODE_VERSION}-alpine-3.16 \
-            -t truemark/node:beta-16-alpine-3.16 \
-            .
-  build-18-alpine-316:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: arm64
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Get Version 18
-        run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
-          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
-          echo "Version: ${NODE_VERSION}"
-      - name: Build 18
-        run: |
-          docker buildx build \
-            --push \
-            --platform linux/arm64,linux/amd64 \
-            --build-arg OS_NAME=alpine \
-            --build-arg OS_VERSION=3.16 \
-            --build-arg NODE_VERSION="${NODE_VERSION}" \
-            -f Dockerfile \
-            -t truemark/node:beta-${NODE_VERSION}-alpine-3.16 \
+            -t truemark/node:beta-${{ env.NODE_VERSION }}-alpine-3.16 \
             -t truemark/node:beta-18-alpine-3.16 \
             .
-  build-16-ubuntu-jammy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
+      - name: Copy beta-${{ env.NODE_VERSION }}-alpine-3.16 to ECR
+        uses: truemark/skopeo-copy-action@v1
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+          src-image: "docker://truemark/node:beta-${{ env.NODE_VERSION }}-alpine-3.16"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-${{ env.NODE_VERSION }}-alpine-3.16"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Copy beta-18-alpine-3.16 to ECR
+        uses: truemark/skopeo-copy-action@v1
         with:
-          platforms: arm64
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Get Version 16
-        run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
-          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
-          echo "Version: ${NODE_VERSION}"
-      - name: Build 16
+          src-image: "docker://truemark/node:beta-18-alpine-3.16"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-18-alpine-3.16"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Build 18 Ubuntu Jammy
         run: |
           docker buildx build \
             --push \
             --platform linux/arm64,linux/amd64 \
             --build-arg OS_NAME=ubuntu \
             --build-arg OS_VERSION=jammy \
-            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            --build-arg NODE_VERSION="${{ env.NODE_VERSION }}" \
             -f Dockerfile \
-            -t truemark/node:beta-${NODE_VERSION}-ubuntu-jammy \
-            -t truemark/node:beta-16-ubuntu-jammy \
-            .
-  build-18-ubuntu-jammy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: arm64
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Get Version 18
-        run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
-          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
-          echo "Version: ${NODE_VERSION}"
-      - name: Build 18
-        run: |
-          docker buildx build \
-            --push \
-            --platform linux/arm64,linux/amd64 \
-            --build-arg OS_NAME=ubuntu \
-            --build-arg OS_VERSION=jammy \
-            --build-arg NODE_VERSION="${NODE_VERSION}" \
-            -f Dockerfile \
-            -t truemark/node:beta-${NODE_VERSION}-ubuntu-jammy \
+            -t truemark/node:beta-${{ env.NODE_VERSION }}-ubuntu-jammy \
             -t truemark/node:beta-18-ubuntu-jammy \
             .
-  build-16-ubuntu-focal:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
+      - name: Copy beta-${{ env.NODE_VERSION }}-ubuntu-jammy to ECR
+        uses: truemark/skopeo-copy-action@v1
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+          src-image: "docker://truemark/node:beta-${{ env.NODE_VERSION }}-ubuntu-jammy"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-${{ env.NODE_VERSION }}-ubuntu-jammy"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Copy beta-18-ubuntu-jammy to ECR
+        uses: truemark/skopeo-copy-action@v1
         with:
-          platforms: arm64
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Get Version 16
-        run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
-          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
-          echo "Version: ${NODE_VERSION}"
-      - name: Build 16
+          src-image: "docker://truemark/node:beta-18-ubuntu-jammy"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-18-ubuntu-jammy"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Build 18 Ubuntu Focal
         run: |
           docker buildx build \
             --push \
             --platform linux/arm64,linux/amd64 \
             --build-arg OS_NAME=ubuntu \
             --build-arg OS_VERSION=focal \
-            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            --build-arg NODE_VERSION="${{ env.NODE_VERSION }}" \
             -f Dockerfile \
-            -t truemark/node:beta-${NODE_VERSION}-ubuntu-focal \
-            -t truemark/node:beta-16-ubuntu-focal \
-            .
-  build-18-ubuntu-focal:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: arm64
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Get Version 18
-        run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
-          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
-          echo "Version: ${NODE_VERSION}"
-      - name: Build 18
-        run: |
-          docker buildx build \
-            --push \
-            --platform linux/arm64,linux/amd64 \
-            --build-arg OS_NAME=ubuntu \
-            --build-arg OS_VERSION=focal \
-            --build-arg NODE_VERSION="${NODE_VERSION}" \
-            -f Dockerfile \
-            -t truemark/node:beta-${NODE_VERSION}-ubuntu-focal \
+            -t truemark/node:beta-${{ env.NODE_VERSION }}-ubuntu-focal \
             -t truemark/node:beta-18-ubuntu-focal \
             .
-  build-16-debian-bookworm:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
+      - name: Copy beta-${{ env.NODE_VERSION }}-ubuntu-focal to ECR
+        uses: truemark/skopeo-copy-action@v1
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+          src-image: "docker://truemark/node:beta-${{ env.NODE_VERSION }}-ubuntu-focal"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-${{ env.NODE_VERSION }}-ubuntu-focal"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Copy beta-16-ubuntu-focal to ECR
+        uses: truemark/skopeo-copy-action@v1
         with:
-          platforms: arm64
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Get Version 16
-        run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
-          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
-          echo "Version: ${NODE_VERSION}"
-      - name: Build 16
+          src-image: "docker://truemark/node:beta-18-ubuntu-focal"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-18-ubuntu-focal"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Build 18 Debian Bookworm
         run: |
           docker buildx build \
             --push \
             --platform linux/arm64,linux/amd64 \
             --build-arg OS_NAME=debian \
             --build-arg OS_VERSION=bookworm \
-            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            --build-arg NODE_VERSION="${{ env.NODE_VERSION }}" \
             -f Dockerfile \
-            -t truemark/node:beta-${NODE_VERSION}-debian-bookworm \
-            -t truemark/node:beta-16-debian-bookworm \
-            .
-  build-18-debian-bookworm:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: arm64
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Get Version 18
-        run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
-          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
-          echo "Version: ${NODE_VERSION}"
-      - name: Build 18
-        run: |
-          docker buildx build \
-            --push \
-            --platform linux/arm64,linux/amd64 \
-            --build-arg OS_NAME=debian \
-            --build-arg OS_VERSION=bookworm \
-            --build-arg NODE_VERSION="${NODE_VERSION}" \
-            -f Dockerfile \
-            -t truemark/node:beta-${NODE_VERSION}-debian-bookworm \
+            -t truemark/node:beta-${{ env.NODE_VERSION }}-debian-bookworm \
             -t truemark/node:beta-18-debian-bookworm \
             .
-  build-16-debian-bullseye:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
+      - name: Copy beta-${{ env.NODE_VERSION }}-debian-bookworm to ECR
+        uses: truemark/skopeo-copy-action@v1
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+          src-image: "docker://truemark/node:beta-${{ env.NODE_VERSION }}-debian-bookworm"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-${{ env.NODE_VERSION }}-debian-bookworm"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Copy beta-18-debian-bookworm to ECR
+        uses: truemark/skopeo-copy-action@v1
         with:
-          platforms: arm64
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Get Version 16
-        run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
-          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
-          echo "Version: ${NODE_VERSION}"
-      - name: Build 16
+          src-image: "docker://truemark/node:beta-18-debian-bookworm"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-18-debian-bookworm"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Build 18 Debian Bullseye
         run: |
           docker buildx build \
             --push \
             --platform linux/arm64,linux/amd64 \
             --build-arg OS_NAME=debian \
             --build-arg OS_VERSION=bullseye \
-            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            --build-arg NODE_VERSION="${{ env.NODE_VERSION }}" \
             -f Dockerfile \
-            -t truemark/node:beta-${NODE_VERSION}-debian-bullseye \
-            -t truemark/node:beta-16-debian-bullseye \
-            .
-  build-18-debian-bullseye:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: arm64
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Get Version 18
-        run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
-          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
-          echo "Version: ${NODE_VERSION}"
-      - name: Build 18
-        run: |
-          docker buildx build \
-            --push \
-            --platform linux/arm64,linux/amd64 \
-            --build-arg OS_NAME=debian \
-            --build-arg OS_VERSION=bullseye \
-            --build-arg NODE_VERSION="${NODE_VERSION}" \
-            -f Dockerfile \
-            -t truemark/node:beta-${NODE_VERSION}-debian-bullseye \
+            -t truemark/node:beta-${{ env.NODE_VERSION }}-debian-bullseye \
             -t truemark/node:beta-18-debian-bullseye \
             .
-  build-16-debian-buster:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
+      - name: Copy beta-${{ env.NODE_VERSION }}-debian-bullseye to ECR
+        uses: truemark/skopeo-copy-action@v1
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+          src-image: "docker://truemark/node:beta-${{ env.NODE_VERSION }}-debian-bullseye"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-${{ env.NODE_VERSION }}-debian-bullseye"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Copy beta-16-debian-bullseye to ECR
+        uses: truemark/skopeo-copy-action@v1
         with:
-          platforms: arm64
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Get Version 16
-        run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
-          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
-          echo "Version: ${NODE_VERSION}"
-      - name: Build 16
+          src-image: "docker://truemark/node:beta-18-debian-bullseye"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-18-debian-bullseye"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Build 18 Amazon Linux 2023
         run: |
           docker buildx build \
             --push \
             --platform linux/arm64,linux/amd64 \
-            --build-arg OS_NAME=debian \
-            --build-arg OS_VERSION=buster \
-            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            --build-arg OS_NAME=amazonlinux \
+            --build-arg OS_VERSION=2023 \
+            --build-arg NODE_VERSION="${{ env.NODE_VERSION }}" \
             -f Dockerfile \
-            -t truemark/node:beta-${NODE_VERSION}-debian-buster \
-            -t truemark/node:beta-16-debian-buster \
+            -t truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2023 \
+            -t truemark/node:beta-18-amazonlinux-2023 \
             .
-  build-18-debian-buster:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
+      - name: Copy beta-${{ env.NODE_VERSION }}-amazonlinux-2023 to ECR
+        uses: truemark/skopeo-copy-action@v1
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+          src-image: "docker://truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2023"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2023"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Copy beta-18-amazonlinux-2023 to ECR
+        uses: truemark/skopeo-copy-action@v1
         with:
-          platforms: arm64
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Get Version 18
-        run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
-          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
-          echo "Version: ${NODE_VERSION}"
-      - name: Build 18
-        run: |
-          docker buildx build \
-            --push \
-            --platform linux/arm64,linux/amd64 \
-            --build-arg OS_NAME=debian \
-            --build-arg OS_VERSION=buster \
-            --build-arg NODE_VERSION="${NODE_VERSION}" \
-            -f Dockerfile \
-            -t truemark/node:beta-${NODE_VERSION}-debian-buster \
-            -t truemark/node:beta-18-debian-buster \
-            .
-  build-16-amazonlinux-2022:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: arm64
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Get Version 16
-        run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
-          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
-          echo "Version: ${NODE_VERSION}"
-      - name: Build 16
+          src-image: "docker://truemark/node:beta-18-amazonlinux-2023"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-18-amazonlinux-2023"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Build 18 Amazon Linux 2022
         run: |
           docker buildx build \
             --push \
             --platform linux/arm64,linux/amd64 \
             --build-arg OS_NAME=amazonlinux \
             --build-arg OS_VERSION=2022 \
-            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            --build-arg NODE_VERSION="${{ env.NODE_VERSION }}" \
             -f Dockerfile \
-            -t truemark/node:beta-${NODE_VERSION}-amazonlinux-2022 \
-            -t truemark/node:beta-16-amazonlinux-2022 \
-            .
-  build-18-amazonlinux-2022:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: arm64
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Get Version 18
-        run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
-          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
-          echo "Version: ${NODE_VERSION}"
-      - name: Build 18
-        run: |
-          docker buildx build \
-            --push \
-            --platform linux/arm64,linux/amd64 \
-            --build-arg OS_NAME=amazonlinux \
-            --build-arg OS_VERSION=2022 \
-            --build-arg NODE_VERSION="${NODE_VERSION}" \
-            -f Dockerfile \
-            -t truemark/node:beta-${NODE_VERSION}-amazonlinux-2022 \
+            -t truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2022 \
             -t truemark/node:beta-18-amazonlinux-2022 \
             .
-  build-16-amazonlinux-2:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
+      - name: Copy beta-${{ env.NODE_VERSION }}-amazonlinux-2022 to ECR
+        uses: truemark/skopeo-copy-action@v1
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+          src-image: "docker://truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2022"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2022"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Copy beta-18-amazonlinux-2022 to ECR
+        uses: truemark/skopeo-copy-action@v1
         with:
-          platforms: arm64
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Get Version 16
-        run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
-          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
-          echo "Version: ${NODE_VERSION}"
-      - name: Build 16
+          src-image: "docker://truemark/node:beta-18-amazonlinux-2022"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-18-amazonlinux-2022"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Build 18 Amazon Linux 2
         run: |
           docker buildx build \
             --push \
             --platform linux/arm64,linux/amd64 \
             --build-arg OS_NAME=amazonlinux \
             --build-arg OS_VERSION=2 \
-            --build-arg NODE_VERSION="${NODE_VERSION}" \
+            --build-arg NODE_VERSION="${{ env.NODE_VERSION }}" \
             -f Dockerfile \
-            -t truemark/node:beta-${NODE_VERSION}-amazonlinux-2 \
-            -t truemark/node:beta-16-amazonlinux-2 \
-            .
-  build-18-amazonlinux-2:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: arm64
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Get Version 18
-        run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
-          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
-          echo "Version: ${NODE_VERSION}"
-      - name: Build 18
-        run: |
-          docker buildx build \
-            --push \
-            --platform linux/arm64,linux/amd64 \
-            --build-arg OS_NAME=amazonlinux \
-            --build-arg OS_VERSION=2 \
-            --build-arg NODE_VERSION="${NODE_VERSION}" \
-            -f Dockerfile \
-            -t truemark/node:beta-${NODE_VERSION}-amazonlinux-2 \
+            -t truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2 \
             -t truemark/node:beta-18-amazonlinux-2 \
             .
+      - name: Copy beta-${{ env.NODE_VERSION }}-amazonlinux-2 to ECR
+        uses: truemark/skopeo-copy-action@v1
+        with:
+          src-image: "docker://truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Copy beta-18-amazonlinux-2 to ECR
+        uses: truemark/skopeo-copy-action@v1
+        with:
+          src-image: "docker://truemark/node:beta-18-amazonlinux-2"
+          dest-image: "docker://public.ecr.aws/truemark/node:beta-18-amazonlinux-2"
+          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
+          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
+          multi-arch: "all"
+      - name: Package
+        run: |
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2" ARCH="amd64" FILE="node-18-amazonlinux-2-amd64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2" ARCH="arm64" FILE="node-18-amazonlinux-2-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2022" ARCH="amd64" FILE="node-18-amazonlinux-2022-amd64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2022" ARCH="arm64" FILE="node-18-amazonlinux-2022-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2023" ARCH="amd64" FILE="node-18-amazonlinux-2023-amd64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2023" ARCH="arm64" FILE="node-18-amazonlinux-2023-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-ubuntu-focal" ARCH="amd64" FILE="node-18-ubuntu-focal-amd64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-ubuntu-focal" ARCH="arm64" FILE="node-18-ubuntu-focal-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-ubuntu-jammy" ARCH="amd64" FILE="node-18-ubuntu-jammy-amd64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-ubuntu-jammy" ARCH="arm64" FILE="node-18-ubuntu-jammy-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-debian-bookworm" ARCH="amd64" FILE="node-18-debian-bookworm-amd64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-debian-bookworm" ARCH="arm64" FILE="node-18-debian-bookworm-arm64.tar.gz" ./getlayer.sh    
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-debian-bullseye" ARCH="amd64" FILE="node-18-debian-bullseye-amd64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-debian-bullseye" ARCH="arm64" FILE="node-18-debian-bullseye-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-alpine-3.16" ARCH="amd64" FILE="node-18-alpine-3.16-amd64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-alpine-3.16" ARCH="arm64" FILE="node-18-alpine-3.16-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-alpine-3.17" ARCH="amd64" FILE="node-18-alpine-3.17-amd64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-alpine-3.17" ARCH="arm64" FILE="node-18-alpine-3.17-arm64.tar.gz" ./getlayer.sh
