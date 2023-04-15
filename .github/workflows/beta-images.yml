@@ -547,81 +547,12 @@ jobs:
           dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
           dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
           multi-arch: "all"
-  build-16-amazon-linux-2:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Get Version 16
-        run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
-          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
-          echo "Version: ${NODE_VERSION}"
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
-          aws-region: "us-east-1"
-          role-duration-seconds: 22200
-      - name: Login to ECR
-        id: ecr-login
-        uses: aws-actions/amazon-ecr-login@v1
-        with:
-          registry-type: public
-      - name: Setup Buildx Remote Docker
-        uses: truemark/aws-buildx-remote-docker-instance-action@v3
-        with:
-          security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
-          subnet-id: "${{ vars.SUBNET_ID }}"
-          instance-profile: "${{ vars.INSTANCE_PROFILE }}"
-          region: "us-east-2"
-      - name: List builder instances
-        run: docker buildx ls
-      - name: Build 16 Amazon Linux 2
-        run: |
-          docker buildx build \
-            --push \
-            --platform linux/arm64,linux/amd64 \
-            --build-arg OS_NAME=amazonlinux \
-            --build-arg OS_VERSION=2 \
-            --build-arg NODE_VERSION="${{ env.NODE_VERSION }}" \
-            -f Dockerfile \
-            -t truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2 \
-            -t truemark/node:beta-16-amazonlinux-2 \
-            .
-      - name: Copy beta-${{ env.NODE_VERSION }}-amazonlinux-2 to ECR
-        uses: truemark/skopeo-copy-action@v1
-        with:
-          src-image: "docker://truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2"
-          dest-image: "docker://public.ecr.aws/truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2"
-          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
-          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
-          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
-          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
-          multi-arch: "all"
-      - name: Copy beta-16-amazonlinux-2 to ECR
-        uses: truemark/skopeo-copy-action@v1
-        with:
-          src-image: "docker://truemark/node:beta-16-amazonlinux-2"
-          dest-image: "docker://public.ecr.aws/truemark/node:beta-16-amazonlinux-2"
-          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
-          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
-          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
-          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
-          multi-arch: "all"
   package-16:
     runs-on: ubuntu-latest
-    needs: [build-16-alpine-317,build-16-alpine-316,build-16-ubuntu-jammy,build-16-ubuntu-focal,build-16-debian-bookworm,build-16-debian-bullseye,build-16-amazon-linux-2023,build-16-amazon-linux-2022,build-16-amazon-linux-2]
+    needs: [build-16-alpine-317,build-16-alpine-316,build-16-ubuntu-jammy,build-16-ubuntu-focal,build-16-debian-bookworm,build-16-debian-bullseye,build-16-amazon-linux-2023,build-16-amazon-linux-2022]
     steps:
       - name: Package Node 16
         run: |
-          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2" ARCH="amd64" FILE="node-16-amazonlinux-2-amd64.tar.gz" ./getlayer.sh
-          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2" ARCH="arm64" FILE="node-16-amazonlinux-2-arm64.tar.gz" ./getlayer.sh
           IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2022" ARCH="amd64" FILE="node-16-amazonlinux-2022-amd64.tar.gz" ./getlayer.sh
           IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2022" ARCH="arm64" FILE="node-16-amazonlinux-2022-arm64.tar.gz" ./getlayer.sh
           IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2023" ARCH="amd64" FILE="node-16-amazonlinux-2023-amd64.tar.gz" ./getlayer.sh
@@ -1179,81 +1110,12 @@ jobs:
           dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
           dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
           multi-arch: "all"
-  build-18-amazon-linux-2:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Get Version 18
-        run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
-          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
-          echo "Version: ${NODE_VERSION}"
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
-          aws-region: "us-east-1"
-          role-duration-seconds: 22200
-      - name: Login to ECR
-        id: ecr-login
-        uses: aws-actions/amazon-ecr-login@v1
-        with:
-          registry-type: public
-      - name: Setup Buildx Remote Docker
-        uses: truemark/aws-buildx-remote-docker-instance-action@v3
-        with:
-          security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
-          subnet-id: "${{ vars.SUBNET_ID }}"
-          instance-profile: "${{ vars.INSTANCE_PROFILE }}"
-          region: "us-east-2"
-      - name: List builder instances
-        run: docker buildx ls
-      - name: Build 18 Amazon Linux 2
-        run: |
-          docker buildx build \
-            --push \
-            --platform linux/arm64,linux/amd64 \
-            --build-arg OS_NAME=amazonlinux \
-            --build-arg OS_VERSION=2 \
-            --build-arg NODE_VERSION="${{ env.NODE_VERSION }}" \
-            -f Dockerfile \
-            -t truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2 \
-            -t truemark/node:beta-18-amazonlinux-2 \
-            .
-      - name: Copy beta-${{ env.NODE_VERSION }}-amazonlinux-2 to ECR
-        uses: truemark/skopeo-copy-action@v1
-        with:
-          src-image: "docker://truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2"
-          dest-image: "docker://public.ecr.aws/truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2"
-          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
-          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
-          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
-          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
-          multi-arch: "all"
-      - name: Copy beta-18-amazonlinux-2 to ECR
-        uses: truemark/skopeo-copy-action@v1
-        with:
-          src-image: "docker://truemark/node:beta-18-amazonlinux-2"
-          dest-image: "docker://public.ecr.aws/truemark/node:beta-18-amazonlinux-2"
-          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
-          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
-          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
-          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
-          multi-arch: "all"
   package-18:
     runs-on: ubuntu-latest
-    needs: [build-18-alpine-317,build-18-alpine-316,build-18-ubuntu-jammy,build-18-ubuntu-focal,build-18-debian-bookworm,build-18-debian-bullseye,build-18-amazon-linux-2023,build-18-amazon-linux-2022,build-18-amazon-linux-2]
+    needs: [build-18-alpine-317,build-18-alpine-316,build-18-ubuntu-jammy,build-18-ubuntu-focal,build-18-debian-bookworm,build-18-debian-bullseye,build-18-amazon-linux-2023,build-18-amazon-linux-2022]
     steps:
       - name: Package Node 18
         run: |
-          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2" ARCH="amd64" FILE="node-18-amazonlinux-2-amd64.tar.gz" ./getlayer.sh
-          IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2" ARCH="arm64" FILE="node-18-amazonlinux-2-arm64.tar.gz" ./getlayer.sh
           IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2022" ARCH="amd64" FILE="node-18-amazonlinux-2022-amd64.tar.gz" ./getlayer.sh
           IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2022" ARCH="arm64" FILE="node-18-amazonlinux-2022-arm64.tar.gz" ./getlayer.sh
           IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2023" ARCH="amd64" FILE="node-18-amazonlinux-2023-amd64.tar.gz" ./getlayer.sh
