@@ -14,7 +14,7 @@ permissions:
   contents: write
 
 jobs:
-  build-16:
+  build-16-alpine-317:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -37,6 +37,7 @@ jobs:
         with:
           role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
           aws-region: "us-east-1"
+          role-duration-seconds: 22200
       - name: Login to ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
@@ -50,6 +51,8 @@ jobs:
           subnet-id: "${{ vars.SUBNET_ID }}"
           instance-profile: "${{ vars.INSTANCE_PROFILE }}"
           region: "us-east-2"
+      - name: List builder instances
+        run: docker buildx ls
       - name: Build 16 Alpine 3.17
         if: ${{ env.TAG_EXISTS != 'true' }}
         run: |
@@ -85,6 +88,45 @@ jobs:
           dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
           dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
           multi-arch: "all"
+  build-16-alpine-316:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Get Version 16
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+          export TAG_EXISTS=$( curl -sSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_VERSION}\") != null")
+          echo "TAG_EXISTS=${TAG_EXISTS}" >> $GITHUB_ENV
+          echo "Exists: ${TAG_EXISTS}"
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
+          aws-region: "us-east-1"
+          role-duration-seconds: 22200
+      - name: Login to ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registry-type: public
+      - name: Setup Buildx Remote Docker
+        id: buildx
+        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        with:
+          security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
+          subnet-id: "${{ vars.SUBNET_ID }}"
+          instance-profile: "${{ vars.INSTANCE_PROFILE }}"
+          region: "us-east-2"
+      - name: List builder instances
+        run: docker buildx ls
       - name: Build 16 Alpine 3.16
         if: ${{ env.TAG_EXISTS != 'true' }}
         run: |
@@ -120,6 +162,45 @@ jobs:
           dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
           dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
           multi-arch: "all"
+  build-16-ubuntu-jammy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Get Version 16
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+          export TAG_EXISTS=$( curl -sSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_VERSION}\") != null")
+          echo "TAG_EXISTS=${TAG_EXISTS}" >> $GITHUB_ENV
+          echo "Exists: ${TAG_EXISTS}"
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
+          aws-region: "us-east-1"
+          role-duration-seconds: 22200
+      - name: Login to ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registry-type: public
+      - name: Setup Buildx Remote Docker
+        id: buildx
+        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        with:
+          security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
+          subnet-id: "${{ vars.SUBNET_ID }}"
+          instance-profile: "${{ vars.INSTANCE_PROFILE }}"
+          region: "us-east-2"
+      - name: List builder instances
+        run: docker buildx ls
       - name: Build 16 Ubuntu Jammy
         if: ${{ env.TAG_EXISTS != 'true' }}
         run: |
@@ -155,6 +236,45 @@ jobs:
           dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
           dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
           multi-arch: "all"
+  build-16-ubuntu-focal:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Get Version 16
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+          export TAG_EXISTS=$( curl -sSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_VERSION}\") != null")
+          echo "TAG_EXISTS=${TAG_EXISTS}" >> $GITHUB_ENV
+          echo "Exists: ${TAG_EXISTS}"
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
+          aws-region: "us-east-1"
+          role-duration-seconds: 22200
+      - name: Login to ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registry-type: public
+      - name: Setup Buildx Remote Docker
+        id: buildx
+        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        with:
+          security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
+          subnet-id: "${{ vars.SUBNET_ID }}"
+          instance-profile: "${{ vars.INSTANCE_PROFILE }}"
+          region: "us-east-2"
+      - name: List builder instances
+        run: docker buildx ls
       - name: Build 16 Ubuntu Focal
         if: ${{ env.TAG_EXISTS != 'true' }}
         run: |
@@ -190,6 +310,45 @@ jobs:
           dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
           dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
           multi-arch: "all"
+  build-16-debian-bookworm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Get Version 16
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+          export TAG_EXISTS=$( curl -sSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_VERSION}\") != null")
+          echo "TAG_EXISTS=${TAG_EXISTS}" >> $GITHUB_ENV
+          echo "Exists: ${TAG_EXISTS}"
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
+          aws-region: "us-east-1"
+          role-duration-seconds: 22200
+      - name: Login to ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registry-type: public
+      - name: Setup Buildx Remote Docker
+        id: buildx
+        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        with:
+          security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
+          subnet-id: "${{ vars.SUBNET_ID }}"
+          instance-profile: "${{ vars.INSTANCE_PROFILE }}"
+          region: "us-east-2"
+      - name: List builder instances
+        run: docker buildx ls
       - name: Build 16 Debian Bookworm
         if: ${{ env.TAG_EXISTS != 'true' }}
         run: |
@@ -225,6 +384,45 @@ jobs:
           dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
           dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
           multi-arch: "all"
+  build-16-debian-bullseye:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Get Version 16
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+          export TAG_EXISTS=$( curl -sSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_VERSION}\") != null")
+          echo "TAG_EXISTS=${TAG_EXISTS}" >> $GITHUB_ENV
+          echo "Exists: ${TAG_EXISTS}"
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
+          aws-region: "us-east-1"
+          role-duration-seconds: 22200
+      - name: Login to ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registry-type: public
+      - name: Setup Buildx Remote Docker
+        id: buildx
+        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        with:
+          security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
+          subnet-id: "${{ vars.SUBNET_ID }}"
+          instance-profile: "${{ vars.INSTANCE_PROFILE }}"
+          region: "us-east-2"
+      - name: List builder instances
+        run: docker buildx ls
       - name: Build 16 Debian Bullseye
         if: ${{ env.TAG_EXISTS != 'true' }}
         run: |
@@ -260,6 +458,45 @@ jobs:
           dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
           dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
           multi-arch: "all"
+  build-16-amazon-linux-2023:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Get Version 16
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+          export TAG_EXISTS=$( curl -sSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_VERSION}\") != null")
+          echo "TAG_EXISTS=${TAG_EXISTS}" >> $GITHUB_ENV
+          echo "Exists: ${TAG_EXISTS}"
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
+          aws-region: "us-east-1"
+          role-duration-seconds: 22200
+      - name: Login to ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registry-type: public
+      - name: Setup Buildx Remote Docker
+        id: buildx
+        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        with:
+          security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
+          subnet-id: "${{ vars.SUBNET_ID }}"
+          instance-profile: "${{ vars.INSTANCE_PROFILE }}"
+          region: "us-east-2"
+      - name: List builder instances
+        run: docker buildx ls
       - name: Build 16 Amazon Linux 2023
         if: ${{ env.TAG_EXISTS != 'true' }}
         run: |
@@ -295,6 +532,45 @@ jobs:
           dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
           dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
           multi-arch: "all"
+  build-16-amazon-linux-2022:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Get Version 16
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+          export TAG_EXISTS=$( curl -sSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_VERSION}\") != null")
+          echo "TAG_EXISTS=${TAG_EXISTS}" >> $GITHUB_ENV
+          echo "Exists: ${TAG_EXISTS}"
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
+          aws-region: "us-east-1"
+          role-duration-seconds: 22200
+      - name: Login to ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registry-type: public
+      - name: Setup Buildx Remote Docker
+        id: buildx
+        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        with:
+          security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
+          subnet-id: "${{ vars.SUBNET_ID }}"
+          instance-profile: "${{ vars.INSTANCE_PROFILE }}"
+          region: "us-east-2"
+      - name: List builder instances
+        run: docker buildx ls
       - name: Build 16 Amazon Linux 2022
         if: ${{ env.TAG_EXISTS != 'true' }}
         run: |
@@ -330,41 +606,10 @@ jobs:
           dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
           dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
           multi-arch: "all"
-      - name: Build 16 Amazon Linux 2
-        if: ${{ env.TAG_EXISTS != 'true' }}
-        run: |
-          docker buildx build \
-            --push \
-            --platform linux/arm64,linux/amd64 \
-            --build-arg OS_NAME=amazonlinux \
-            --build-arg OS_VERSION=2 \
-            --build-arg NODE_VERSION="${{ env.NODE_VERSION }}" \
-            -f Dockerfile \
-            -t truemark/node:${{ env.NODE_VERSION }}-amazonlinux-2 \
-            -t truemark/node:16-amazonlinux-2 \
-            .
-      - name: Copy ${{ env.NODE_VERSION }}-amazonlinux-2 to ECR
-        if: ${{ env.TAG_EXISTS != 'true' }}
-        uses: truemark/skopeo-copy-action@v1
-        with:
-          src-image: "docker://truemark/node:${{ env.NODE_VERSION }}-amazonlinux-2"
-          dest-image: "docker://public.ecr.aws/truemark/node:${{ env.NODE_VERSION }}-amazonlinux-2"
-          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
-          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
-          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
-          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
-          multi-arch: "all"
-      - name: Copy 16-amazonlinux-2 to ECR
-        if: ${{ env.TAG_EXISTS != 'true' }}
-        uses: truemark/skopeo-copy-action@v1
-        with:
-          src-image: "docker://truemark/node:16-amazonlinux-2"
-          dest-image: "docker://public.ecr.aws/truemark/node:16-amazonlinux-2"
-          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
-          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
-          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
-          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
-          multi-arch: "all"
+  package-16:
+    runs-on: ubuntu-latest
+    needs: [build-16-alpine-317,build-16-alpine-316,build-16-ubuntu-jammy,build-16-ubuntu-focal,build-16-debian-bookworm,build-16-debian-bullseye,build-16-amazon-linux-2023,build-16-amazon-linux-2022]
+    steps:
       - name: Package
         if: ${{ env.TAG_EXISTS != 'true' }}
         run: |
@@ -386,7 +631,7 @@ jobs:
           IMAGE="truemark/node:${{ env.NODE_VERSION }}-alpine-3.16" ARCH="arm64" FILE="node-16-alpine-3.16-arm64.tar.gz" ./getlayer.sh
           IMAGE="truemark/node:${{ env.NODE_VERSION }}-alpine-3.17" ARCH="amd64" FILE="node-16-alpine-3.17-amd64.tar.gz" ./getlayer.sh
           IMAGE="truemark/node:${{ env.NODE_VERSION }}-alpine-3.17" ARCH="arm64" FILE="node-16-alpine-3.17-arm64.tar.gz" ./getlayer.sh
-  build-18:
+  build-18-alpine-317:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -406,6 +651,7 @@ jobs:
         with:
           role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
           aws-region: "us-east-1"
+          role-duration-seconds: 22200
       - name: Login to ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
@@ -419,6 +665,8 @@ jobs:
           subnet-id: "${{ vars.SUBNET_ID }}"
           instance-profile: "${{ vars.INSTANCE_PROFILE }}"
           region: "us-east-2"
+      - name: List builder instances
+        run: docker buildx ls
       - name: Build 18 Alpine 3.17
         if: ${{ env.TAG_EXISTS != 'true' }}
         run: |
@@ -454,6 +702,42 @@ jobs:
           dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
           dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
           multi-arch: "all"
+  build-18-alpine-316:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Get Version 18
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
+          aws-region: "us-east-1"
+          role-duration-seconds: 22200
+      - name: Login to ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registry-type: public
+      - name: Setup Buildx Remote Docker
+        id: buildx
+        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        with:
+          security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
+          subnet-id: "${{ vars.SUBNET_ID }}"
+          instance-profile: "${{ vars.INSTANCE_PROFILE }}"
+          region: "us-east-2"
+      - name: List builder instances
+        run: docker buildx ls
       - name: Build 18 Alpine 3.16
         if: ${{ env.TAG_EXISTS != 'true' }}
         run: |
@@ -489,6 +773,42 @@ jobs:
           dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
           dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
           multi-arch: "all"
+  build-18-ubuntu-jammy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Get Version 18
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
+          aws-region: "us-east-1"
+          role-duration-seconds: 22200
+      - name: Login to ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registry-type: public
+      - name: Setup Buildx Remote Docker
+        id: buildx
+        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        with:
+          security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
+          subnet-id: "${{ vars.SUBNET_ID }}"
+          instance-profile: "${{ vars.INSTANCE_PROFILE }}"
+          region: "us-east-2"
+      - name: List builder instances
+        run: docker buildx ls
       - name: Build 18 Ubuntu Jammy
         if: ${{ env.TAG_EXISTS != 'true' }}
         run: |
@@ -524,6 +844,42 @@ jobs:
           dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
           dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
           multi-arch: "all"
+  build-18-ubuntu-focal:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Get Version 18
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
+          aws-region: "us-east-1"
+          role-duration-seconds: 22200
+      - name: Login to ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registry-type: public
+      - name: Setup Buildx Remote Docker
+        id: buildx
+        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        with:
+          security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
+          subnet-id: "${{ vars.SUBNET_ID }}"
+          instance-profile: "${{ vars.INSTANCE_PROFILE }}"
+          region: "us-east-2"
+      - name: List builder instances
+        run: docker buildx ls
       - name: Build 18 Ubuntu Focal
         if: ${{ env.TAG_EXISTS != 'true' }}
         run: |
@@ -559,6 +915,42 @@ jobs:
           dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
           dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
           multi-arch: "all"
+  build-18-debian-bookworm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Get Version 18
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
+          aws-region: "us-east-1"
+          role-duration-seconds: 22200
+      - name: Login to ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registry-type: public
+      - name: Setup Buildx Remote Docker
+        id: buildx
+        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        with:
+          security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
+          subnet-id: "${{ vars.SUBNET_ID }}"
+          instance-profile: "${{ vars.INSTANCE_PROFILE }}"
+          region: "us-east-2"
+      - name: List builder instances
+        run: docker buildx ls
       - name: Build 18 Debian Bookworm
         if: ${{ env.TAG_EXISTS != 'true' }}
         run: |
@@ -594,6 +986,42 @@ jobs:
           dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
           dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
           multi-arch: "all"
+  build-18-debian-bullseye:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Get Version 18
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
+          aws-region: "us-east-1"
+          role-duration-seconds: 22200
+      - name: Login to ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registry-type: public
+      - name: Setup Buildx Remote Docker
+        id: buildx
+        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        with:
+          security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
+          subnet-id: "${{ vars.SUBNET_ID }}"
+          instance-profile: "${{ vars.INSTANCE_PROFILE }}"
+          region: "us-east-2"
+      - name: List builder instances
+        run: docker buildx ls
       - name: Build 18 Debian Bullseye
         if: ${{ env.TAG_EXISTS != 'true' }}
         run: |
@@ -629,6 +1057,42 @@ jobs:
           dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
           dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
           multi-arch: "all"
+  build-18-amazon-linux-2023:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Get Version 18
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
+          aws-region: "us-east-1"
+          role-duration-seconds: 22200
+      - name: Login to ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registry-type: public
+      - name: Setup Buildx Remote Docker
+        id: buildx
+        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        with:
+          security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
+          subnet-id: "${{ vars.SUBNET_ID }}"
+          instance-profile: "${{ vars.INSTANCE_PROFILE }}"
+          region: "us-east-2"
+      - name: List builder instances
+        run: docker buildx ls
       - name: Build 18 Amazon Linux 2023
         if: ${{ env.TAG_EXISTS != 'true' }}
         run: |
@@ -664,6 +1128,42 @@ jobs:
           dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
           dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
           multi-arch: "all"
+  build-18-amazon-linux-2022:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Get Version 18
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
+          aws-region: "us-east-1"
+          role-duration-seconds: 22200
+      - name: Login to ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registry-type: public
+      - name: Setup Buildx Remote Docker
+        id: buildx
+        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        with:
+          security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
+          subnet-id: "${{ vars.SUBNET_ID }}"
+          instance-profile: "${{ vars.INSTANCE_PROFILE }}"
+          region: "us-east-2"
+      - name: List builder instances
+        run: docker buildx ls
       - name: Build 18 Amazon Linux 2022
         if: ${{ env.TAG_EXISTS != 'true' }}
         run: |
@@ -699,41 +1199,10 @@ jobs:
           dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
           dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
           multi-arch: "all"
-      - name: Build 18 Amazon Linux 2
-        if: ${{ env.TAG_EXISTS != 'true' }}
-        run: |
-          docker buildx build \
-            --push \
-            --platform linux/arm64,linux/amd64 \
-            --build-arg OS_NAME=amazonlinux \
-            --build-arg OS_VERSION=2 \
-            --build-arg NODE_VERSION="${{ env.NODE_VERSION }}" \
-            -f Dockerfile \
-            -t truemark/node:${{ env.NODE_VERSION }}-amazonlinux-2 \
-            -t truemark/node:18-amazonlinux-2 \
-            .
-      - name: Copy ${{ env.NODE_VERSION }}-amazonlinux-2 to ECR
-        if: ${{ env.TAG_EXISTS != 'true' }}
-        uses: truemark/skopeo-copy-action@v1
-        with:
-          src-image: "docker://truemark/node:${{ env.NODE_VERSION }}-amazonlinux-2"
-          dest-image: "docker://public.ecr.aws/truemark/node:${{ env.NODE_VERSION }}-amazonlinux-2"
-          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
-          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
-          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
-          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
-          multi-arch: "all"
-      - name: Copy 18-amazonlinux-2 to ECR
-        if: ${{ env.TAG_EXISTS != 'true' }}
-        uses: truemark/skopeo-copy-action@v1
-        with:
-          src-image: "docker://truemark/node:18-amazonlinux-2"
-          dest-image: "docker://public.ecr.aws/truemark/node:18-amazonlinux-2"
-          src-username: "${{ secrets.DOCKER_HUB_USERNAME }}"
-          src-password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
-          dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
-          dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
-          multi-arch: "all"
+  package-18:
+    runs-on: ubuntu-latest
+    needs: [build-18-alpine-317,build-18-alpine-316,build-18-ubuntu-jammy,build-18-ubuntu-focal,build-18-debian-bookworm,build-18-debian-bullseye,build-18-amazon-linux-2023,build-18-amazon-linux-2022]
+    steps:
       - name: Package
         if: ${{ env.TAG_EXISTS != 'true' }}
         run: |
