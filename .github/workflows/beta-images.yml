@@ -607,7 +607,7 @@ jobs:
           multi-arch: "all"
   package-16:
     runs-on: ubuntu-latest
-    depends-on: build-16-alpine-317,build-16-alpine-316,build-16-ubuntu-jammy,build-16-ubuntu-focal,build-16-debian-bookworm,build-16-debian-bullseye,build-16-amazon-linux-2023,build-16-amazon-linux-2022,build-16-amazon-linux-2
+    needs: [build-16-alpine-317,build-16-alpine-316,build-16-ubuntu-jammy,build-16-ubuntu-focal,build-16-debian-bookworm,build-16-debian-bullseye,build-16-amazon-linux-2023,build-16-amazon-linux-2022,build-16-amazon-linux-2]
     steps:
       - name: Package Node 16
         run: |
@@ -1230,7 +1230,7 @@ jobs:
           multi-arch: "all"
   package-18:
     runs-on: ubuntu-latest
-    depends-on: build-18-alpine-317,build-18-alpine-316,build-18-ubuntu-jammy,build-18-ubuntu-focal,build-18-debian-bookworm,build-18-debian-bullseye,build-18-amazon-linux-2023,build-18-amazon-linux-2022,build-18-amazon-linux-2
+    needs: [build-18-alpine-317,build-18-alpine-316,build-18-ubuntu-jammy,build-18-ubuntu-focal,build-18-debian-bookworm,build-18-debian-bullseye,build-18-amazon-linux-2023,build-18-amazon-linux-2022,build-18-amazon-linux-2]
     steps:
       - name: Package Node 18
         run: |
