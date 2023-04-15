@@ -605,7 +605,9 @@ jobs:
           dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
           dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
           multi-arch: "all"
-    package-16:
+  package-16:
+    runs-on: ubuntu-latest
+    steps:
       - name: Package Node 16
         depends-on: build-16-alpine-317,build-16-alpine-316,build-16-ubuntu-jammy,build-16-ubuntu-focal,build-16-debian-bookworm,build-16-debian-bullseye,build-16-amazon-linux-2023,build-16-amazon-linux-2022,build-16-amazon-linux-2
         run: |
@@ -1226,7 +1228,9 @@ jobs:
           dest-username: "${{ steps.ecr-login.outputs.docker_username_public_ecr_aws }}"
           dest-password: "${{ steps.ecr-login.outputs.docker_password_public_ecr_aws }}"
           multi-arch: "all"
-    package-18:
+  package-18:
+    runs-on: ubuntu-latest
+    steps:
       - name: Package Node 18
         depends-on: build-18-alpine-317,build-18-alpine-316,build-18-ubuntu-jammy,build-18-ubuntu-focal,build-18-debian-bookworm,build-18-debian-bullseye,build-18-amazon-linux-2023,build-18-amazon-linux-2022,build-18-amazon-linux-2
         run: |
