@@ -45,7 +45,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -119,7 +119,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -193,7 +193,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -267,7 +267,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -341,7 +341,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -415,7 +415,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -489,7 +489,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -563,7 +563,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -661,7 +661,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -732,7 +732,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -803,7 +803,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -874,7 +874,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -945,7 +945,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -1016,7 +1016,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -1087,7 +1087,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -1158,7 +1158,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
