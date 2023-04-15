@@ -31,6 +31,7 @@ jobs:
         with:
           role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
           aws-region: "us-east-1"
+          role-duration-seconds: 22200
       - name: Login to ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
@@ -97,6 +98,7 @@ jobs:
         with:
           role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
           aws-region: "us-east-1"
+          role-duration-seconds: 22200
       - name: Login to ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
@@ -163,6 +165,7 @@ jobs:
         with:
           role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
           aws-region: "us-east-1"
+          role-duration-seconds: 22200
       - name: Login to ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
@@ -229,6 +232,7 @@ jobs:
         with:
           role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
           aws-region: "us-east-1"
+          role-duration-seconds: 22200
       - name: Login to ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
@@ -295,6 +299,7 @@ jobs:
         with:
           role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
           aws-region: "us-east-1"
+          role-duration-seconds: 22200
       - name: Login to ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
@@ -361,6 +366,7 @@ jobs:
         with:
           role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
           aws-region: "us-east-1"
+          role-duration-seconds: 22200
       - name: Login to ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
@@ -427,6 +433,7 @@ jobs:
         with:
           role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
           aws-region: "us-east-1"
+          role-duration-seconds: 22200
       - name: Login to ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
@@ -493,6 +500,7 @@ jobs:
         with:
           role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
           aws-region: "us-east-1"
+          role-duration-seconds: 22200
       - name: Login to ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
@@ -559,6 +567,7 @@ jobs:
         with:
           role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
           aws-region: "us-east-1"
+          role-duration-seconds: 22200
       - name: Login to ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
@@ -654,6 +663,7 @@ jobs:
         with:
           role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
           aws-region: "us-east-1"
+          role-duration-seconds: 22200
       - name: Login to ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
@@ -720,6 +730,7 @@ jobs:
         with:
           role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
           aws-region: "us-east-1"
+          role-duration-seconds: 22200
       - name: Login to ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
@@ -786,6 +797,7 @@ jobs:
         with:
           role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
           aws-region: "us-east-1"
+          role-duration-seconds: 22200
       - name: Login to ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
@@ -852,6 +864,7 @@ jobs:
         with:
           role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
           aws-region: "us-east-1"
+          role-duration-seconds: 22200
       - name: Login to ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
@@ -918,6 +931,7 @@ jobs:
         with:
           role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
           aws-region: "us-east-1"
+          role-duration-seconds: 22200
       - name: Login to ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
@@ -984,6 +998,7 @@ jobs:
         with:
           role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
           aws-region: "us-east-1"
+          role-duration-seconds: 22200
       - name: Login to ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
@@ -1050,6 +1065,7 @@ jobs:
         with:
           role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
           aws-region: "us-east-1"
+          role-duration-seconds: 22200
       - name: Login to ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
@@ -1116,6 +1132,7 @@ jobs:
         with:
           role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
           aws-region: "us-east-1"
+          role-duration-seconds: 22200
       - name: Login to ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
@@ -1182,6 +1199,7 @@ jobs:
         with:
           role-to-assume: "${{ secrets.AWS_ASSUME_ROLE }}"
           aws-region: "us-east-1"
+          role-duration-seconds: 22200
       - name: Login to ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
