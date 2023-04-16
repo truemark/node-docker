@@ -45,6 +45,7 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
+        if: ${{ env.TAG_EXISTS != 'true' }}
         id: buildx
         uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
@@ -55,6 +56,7 @@ jobs:
           arm64-instance-type: "c7g.xlarge"
           amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
+        if: ${{ env.TAG_EXISTS != 'true' }}
         run: docker buildx ls
       - name: Build 16 Alpine 3.17
         if: ${{ env.TAG_EXISTS != 'true' }}
@@ -122,6 +124,7 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
+        if: ${{ env.TAG_EXISTS != 'true' }}
         id: buildx
         uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
@@ -132,6 +135,7 @@ jobs:
           arm64-instance-type: "c7g.xlarge"
           amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
+        if: ${{ env.TAG_EXISTS != 'true' }}
         run: docker buildx ls
       - name: Build 16 Alpine 3.16
         if: ${{ env.TAG_EXISTS != 'true' }}
@@ -199,6 +203,7 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
+        if: ${{ env.TAG_EXISTS != 'true' }}
         id: buildx
         uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
@@ -209,6 +214,7 @@ jobs:
           arm64-instance-type: "c7g.xlarge"
           amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
+        if: ${{ env.TAG_EXISTS != 'true' }}
         run: docker buildx ls
       - name: Build 16 Ubuntu Jammy
         if: ${{ env.TAG_EXISTS != 'true' }}
@@ -276,6 +282,7 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
+        if: ${{ env.TAG_EXISTS != 'true' }}
         id: buildx
         uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
@@ -286,6 +293,7 @@ jobs:
           arm64-instance-type: "c7g.xlarge"
           amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
+        if: ${{ env.TAG_EXISTS != 'true' }}
         run: docker buildx ls
       - name: Build 16 Ubuntu Focal
         if: ${{ env.TAG_EXISTS != 'true' }}
@@ -353,6 +361,7 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
+        if: ${{ env.TAG_EXISTS != 'true' }}
         id: buildx
         uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
@@ -363,6 +372,7 @@ jobs:
           arm64-instance-type: "c7g.xlarge"
           amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
+        if: ${{ env.TAG_EXISTS != 'true' }}
         run: docker buildx ls
       - name: Build 16 Debian Bookworm
         if: ${{ env.TAG_EXISTS != 'true' }}
@@ -430,6 +440,7 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
+        if: ${{ env.TAG_EXISTS != 'true' }}
         id: buildx
         uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
@@ -440,6 +451,7 @@ jobs:
           arm64-instance-type: "c7g.xlarge"
           amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
+        if: ${{ env.TAG_EXISTS != 'true' }}
         run: docker buildx ls
       - name: Build 16 Debian Bullseye
         if: ${{ env.TAG_EXISTS != 'true' }}
@@ -507,6 +519,7 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
+        if: ${{ env.TAG_EXISTS != 'true' }}
         id: buildx
         uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
@@ -517,6 +530,7 @@ jobs:
           arm64-instance-type: "c7g.xlarge"
           amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
+        if: ${{ env.TAG_EXISTS != 'true' }}
         run: docker buildx ls
       - name: Build 16 Amazon Linux 2023
         if: ${{ env.TAG_EXISTS != 'true' }}
@@ -584,6 +598,7 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
+        if: ${{ env.TAG_EXISTS != 'true' }}
         id: buildx
         uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
@@ -594,6 +609,7 @@ jobs:
           arm64-instance-type: "c7g.xlarge"
           amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
+        if: ${{ env.TAG_EXISTS != 'true' }}
         run: docker buildx ls
       - name: Build 16 Amazon Linux 2022
         if: ${{ env.TAG_EXISTS != 'true' }}
@@ -717,6 +733,7 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
+        if: ${{ env.TAG_EXISTS != 'true' }}
         id: buildx
         uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
@@ -727,6 +744,7 @@ jobs:
           arm64-instance-type: "c7g.xlarge"
           amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
+        if: ${{ env.TAG_EXISTS != 'true' }}
         run: docker buildx ls
       - name: Build 18 Alpine 3.17
         if: ${{ env.TAG_EXISTS != 'true' }}
@@ -794,6 +812,7 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
+        if: ${{ env.TAG_EXISTS != 'true' }}
         id: buildx
         uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
@@ -804,6 +823,7 @@ jobs:
           arm64-instance-type: "c7g.xlarge"
           amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
+        if: ${{ env.TAG_EXISTS != 'true' }}
         run: docker buildx ls
       - name: Build 18 Alpine 3.16
         if: ${{ env.TAG_EXISTS != 'true' }}
@@ -871,6 +891,7 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
+        if: ${{ env.TAG_EXISTS != 'true' }}
         id: buildx
         uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
@@ -881,6 +902,7 @@ jobs:
           arm64-instance-type: "c7g.xlarge"
           amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
+        if: ${{ env.TAG_EXISTS != 'true' }}
         run: docker buildx ls
       - name: Build 18 Ubuntu Jammy
         if: ${{ env.TAG_EXISTS != 'true' }}
@@ -948,6 +970,7 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
+        if: ${{ env.TAG_EXISTS != 'true' }}
         id: buildx
         uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
@@ -958,6 +981,7 @@ jobs:
           arm64-instance-type: "c7g.xlarge"
           amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
+        if: ${{ env.TAG_EXISTS != 'true' }}
         run: docker buildx ls
       - name: Build 18 Ubuntu Focal
         if: ${{ env.TAG_EXISTS != 'true' }}
@@ -1025,6 +1049,7 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
+        if: ${{ env.TAG_EXISTS != 'true' }}
         id: buildx
         uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
@@ -1035,6 +1060,7 @@ jobs:
           arm64-instance-type: "c7g.xlarge"
           amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
+        if: ${{ env.TAG_EXISTS != 'true' }}
         run: docker buildx ls
       - name: Build 18 Debian Bookworm
         if: ${{ env.TAG_EXISTS != 'true' }}
@@ -1102,6 +1128,7 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
+        if: ${{ env.TAG_EXISTS != 'true' }}
         id: buildx
         uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
@@ -1112,6 +1139,7 @@ jobs:
           arm64-instance-type: "c7g.xlarge"
           amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
+        if: ${{ env.TAG_EXISTS != 'true' }}
         run: docker buildx ls
       - name: Build 18 Debian Bullseye
         if: ${{ env.TAG_EXISTS != 'true' }}
@@ -1179,6 +1207,7 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
+        if: ${{ env.TAG_EXISTS != 'true' }}
         id: buildx
         uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
@@ -1189,6 +1218,7 @@ jobs:
           arm64-instance-type: "c7g.xlarge"
           amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
+        if: ${{ env.TAG_EXISTS != 'true' }}
         run: docker buildx ls
       - name: Build 18 Amazon Linux 2023
         if: ${{ env.TAG_EXISTS != 'true' }}
@@ -1256,6 +1286,7 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
+        if: ${{ env.TAG_EXISTS != 'true' }}
         id: buildx
         uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
@@ -1266,6 +1297,7 @@ jobs:
           arm64-instance-type: "c7g.xlarge"
           amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
+        if: ${{ env.TAG_EXISTS != 'true' }}
         run: docker buildx ls
       - name: Build 18 Amazon Linux 2022
         if: ${{ env.TAG_EXISTS != 'true' }}
