@@ -615,8 +615,6 @@ jobs:
       - name: Package
         if: ${{ env.TAG_EXISTS != 'true' }}
         run: |
-          IMAGE="truemark/node:${{ env.NODE_VERSION }}-amazonlinux-2" ARCH="amd64" FILE="node-16-amazonlinux-2-amd64.tar.gz" ./getlayer.sh
-          IMAGE="truemark/node:${{ env.NODE_VERSION }}-amazonlinux-2" ARCH="arm64" FILE="node-16-amazonlinux-2-arm64.tar.gz" ./getlayer.sh
           IMAGE="truemark/node:${{ env.NODE_VERSION }}-amazonlinux-2022" ARCH="amd64" FILE="node-16-amazonlinux-2022-amd64.tar.gz" ./getlayer.sh
           IMAGE="truemark/node:${{ env.NODE_VERSION }}-amazonlinux-2022" ARCH="arm64" FILE="node-16-amazonlinux-2022-arm64.tar.gz" ./getlayer.sh
           IMAGE="truemark/node:${{ env.NODE_VERSION }}-amazonlinux-2023" ARCH="amd64" FILE="node-16-amazonlinux-2023-amd64.tar.gz" ./getlayer.sh
@@ -643,6 +641,9 @@ jobs:
           export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
+          export TAG_EXISTS=$( curl -sSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_VERSION}\") != null")
+          echo "TAG_EXISTS=${TAG_EXISTS}" >> $GITHUB_ENV
+          echo "Exists: ${TAG_EXISTS}"
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -714,6 +715,9 @@ jobs:
           export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
+          export TAG_EXISTS=$( curl -sSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_VERSION}\") != null")
+          echo "TAG_EXISTS=${TAG_EXISTS}" >> $GITHUB_ENV
+          echo "Exists: ${TAG_EXISTS}"
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -785,6 +789,9 @@ jobs:
           export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
+          export TAG_EXISTS=$( curl -sSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_VERSION}\") != null")
+          echo "TAG_EXISTS=${TAG_EXISTS}" >> $GITHUB_ENV
+          echo "Exists: ${TAG_EXISTS}"
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -856,6 +863,9 @@ jobs:
           export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
+          export TAG_EXISTS=$( curl -sSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_VERSION}\") != null")
+          echo "TAG_EXISTS=${TAG_EXISTS}" >> $GITHUB_ENV
+          echo "Exists: ${TAG_EXISTS}"
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -927,6 +937,9 @@ jobs:
           export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
+          export TAG_EXISTS=$( curl -sSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_VERSION}\") != null")
+          echo "TAG_EXISTS=${TAG_EXISTS}" >> $GITHUB_ENV
+          echo "Exists: ${TAG_EXISTS}"
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -998,6 +1011,9 @@ jobs:
           export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
+          export TAG_EXISTS=$( curl -sSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_VERSION}\") != null")
+          echo "TAG_EXISTS=${TAG_EXISTS}" >> $GITHUB_ENV
+          echo "Exists: ${TAG_EXISTS}"
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -1069,6 +1085,9 @@ jobs:
           export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
+          export TAG_EXISTS=$( curl -sSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_VERSION}\") != null")
+          echo "TAG_EXISTS=${TAG_EXISTS}" >> $GITHUB_ENV
+          echo "Exists: ${TAG_EXISTS}"
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -1140,6 +1159,9 @@ jobs:
           export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
+          export TAG_EXISTS=$( curl -sSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_VERSION}\") != null")
+          echo "TAG_EXISTS=${TAG_EXISTS}" >> $GITHUB_ENV
+          echo "Exists: ${TAG_EXISTS}"
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -1210,8 +1232,6 @@ jobs:
       - name: Package
         if: ${{ env.TAG_EXISTS != 'true' }}
         run: |
-          IMAGE="truemark/node:${{ env.NODE_VERSION }}-amazonlinux-2" ARCH="amd64" FILE="node-18-amazonlinux-2-amd64.tar.gz" ./getlayer.sh
-          IMAGE="truemark/node:${{ env.NODE_VERSION }}-amazonlinux-2" ARCH="arm64" FILE="node-18-amazonlinux-2-arm64.tar.gz" ./getlayer.sh
           IMAGE="truemark/node:${{ env.NODE_VERSION }}-amazonlinux-2022" ARCH="amd64" FILE="node-18-amazonlinux-2022-amd64.tar.gz" ./getlayer.sh
           IMAGE="truemark/node:${{ env.NODE_VERSION }}-amazonlinux-2022" ARCH="arm64" FILE="node-18-amazonlinux-2022-arm64.tar.gz" ./getlayer.sh
           IMAGE="truemark/node:${{ env.NODE_VERSION }}-amazonlinux-2023" ARCH="amd64" FILE="node-18-amazonlinux-2023-amd64.tar.gz" ./getlayer.sh
