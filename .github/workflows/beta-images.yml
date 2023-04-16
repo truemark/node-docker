@@ -39,12 +39,14 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
-        uses: truemark/aws-buildx-remote-docker-instance-action@v3
+        uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
           instance-profile: "${{ vars.INSTANCE_PROFILE }}"
           region: "us-east-2"
+          arm64-instance-type: "c7g.xlarge"
+          amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
         run: docker buildx ls
       - name: Build 16 Alpine 3.17
@@ -107,12 +109,14 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
-        uses: truemark/aws-buildx-remote-docker-instance-action@v3
+        uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
           instance-profile: "${{ vars.INSTANCE_PROFILE }}"
           region: "us-east-2"
+          arm64-instance-type: "c7g.xlarge"
+          amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
         run: docker buildx ls
       - name: Build 16 Alpine 3.16
@@ -175,12 +179,14 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
-        uses: truemark/aws-buildx-remote-docker-instance-action@v3
+        uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
           instance-profile: "${{ vars.INSTANCE_PROFILE }}"
           region: "us-east-2"
+          arm64-instance-type: "c7g.xlarge"
+          amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
         run: docker buildx ls
       - name: Build 16 Ubuntu Jammy
@@ -243,12 +249,14 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
-        uses: truemark/aws-buildx-remote-docker-instance-action@v3
+        uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
           instance-profile: "${{ vars.INSTANCE_PROFILE }}"
           region: "us-east-2"
+          arm64-instance-type: "c7g.xlarge"
+          amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
         run: docker buildx ls
       - name: Build 16 Ubuntu Focal
@@ -311,12 +319,14 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
-        uses: truemark/aws-buildx-remote-docker-instance-action@v3
+        uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
           instance-profile: "${{ vars.INSTANCE_PROFILE }}"
           region: "us-east-2"
+          arm64-instance-type: "c7g.xlarge"
+          amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
         run: docker buildx ls
       - name: Build 16 Debian Bookworm
@@ -379,12 +389,14 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
-        uses: truemark/aws-buildx-remote-docker-instance-action@v3
+        uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
           instance-profile: "${{ vars.INSTANCE_PROFILE }}"
           region: "us-east-2"
+          arm64-instance-type: "c7g.xlarge"
+          amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
         run: docker buildx ls
       - name: Build 16 Debian Bullseye
@@ -447,12 +459,14 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
-        uses: truemark/aws-buildx-remote-docker-instance-action@v3
+        uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
           instance-profile: "${{ vars.INSTANCE_PROFILE }}"
           region: "us-east-2"
+          arm64-instance-type: "c7g.xlarge"
+          amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
         run: docker buildx ls
       - name: Build 16 Amazon Linux 2023
@@ -515,12 +529,14 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
-        uses: truemark/aws-buildx-remote-docker-instance-action@v3
+        uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
           instance-profile: "${{ vars.INSTANCE_PROFILE }}"
           region: "us-east-2"
+          arm64-instance-type: "c7g.xlarge"
+          amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
         run: docker buildx ls
       - name: Build 16 Amazon Linux 2022
@@ -623,12 +639,14 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
-        uses: truemark/aws-buildx-remote-docker-instance-action@v3
+        uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
           instance-profile: "${{ vars.INSTANCE_PROFILE }}"
           region: "us-east-2"
+          arm64-instance-type: "c7g.xlarge"
+          amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
         run: docker buildx ls
       - name: Build 18 Alpine 3.17
@@ -691,12 +709,14 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
-        uses: truemark/aws-buildx-remote-docker-instance-action@v3
+        uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
           instance-profile: "${{ vars.INSTANCE_PROFILE }}"
           region: "us-east-2"
+          arm64-instance-type: "c7g.xlarge"
+          amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
         run: docker buildx ls
       - name: Build 18 Alpine 3.16
@@ -759,12 +779,14 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
-        uses: truemark/aws-buildx-remote-docker-instance-action@v3
+        uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
           instance-profile: "${{ vars.INSTANCE_PROFILE }}"
           region: "us-east-2"
+          arm64-instance-type: "c7g.xlarge"
+          amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
         run: docker buildx ls
       - name: Build 18 Ubuntu Jammy
@@ -827,12 +849,14 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
-        uses: truemark/aws-buildx-remote-docker-instance-action@v3
+        uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
           instance-profile: "${{ vars.INSTANCE_PROFILE }}"
           region: "us-east-2"
+          arm64-instance-type: "c7g.xlarge"
+          amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
         run: docker buildx ls
       - name: Build 18 Ubuntu Focal
@@ -895,12 +919,14 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
-        uses: truemark/aws-buildx-remote-docker-instance-action@v3
+        uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
           instance-profile: "${{ vars.INSTANCE_PROFILE }}"
           region: "us-east-2"
+          arm64-instance-type: "c7g.xlarge"
+          amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
         run: docker buildx ls
       - name: Build 18 Debian Bookworm
@@ -963,12 +989,14 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
-        uses: truemark/aws-buildx-remote-docker-instance-action@v3
+        uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
           instance-profile: "${{ vars.INSTANCE_PROFILE }}"
           region: "us-east-2"
+          arm64-instance-type: "c7g.xlarge"
+          amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
         run: docker buildx ls
       - name: Build 18 Debian Bullseye
@@ -1031,12 +1059,14 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
-        uses: truemark/aws-buildx-remote-docker-instance-action@v3
+        uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
           instance-profile: "${{ vars.INSTANCE_PROFILE }}"
           region: "us-east-2"
+          arm64-instance-type: "c7g.xlarge"
+          amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
         run: docker buildx ls
       - name: Build 18 Amazon Linux 2023
@@ -1099,12 +1129,14 @@ jobs:
         with:
           registry-type: public
       - name: Setup Buildx Remote Docker
-        uses: truemark/aws-buildx-remote-docker-instance-action@v3
+        uses: truemark/aws-buildx-remote-docker-instance-action@v4
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
           instance-profile: "${{ vars.INSTANCE_PROFILE }}"
           region: "us-east-2"
+          arm64-instance-type: "c7g.xlarge"
+          amd64-instance-type: "c6i.xlarge"
       - name: List builder instances
         run: docker buildx ls
       - name: Build 18 Amazon Linux 2022
