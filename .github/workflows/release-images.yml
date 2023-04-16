@@ -6,8 +6,8 @@ on:
     branches:
       - main
   schedule:
-    # Run at 4PM UTC every Monday
-    - cron: '0 16 * * 1'
+    # Run at 1PM UTC every Monday
+    - cron: '0 13 * * 1'
 
 permissions:
   id-token: write
