@@ -13,6 +13,7 @@ permissions:
 jobs:
   build-16-alpine-317:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -80,6 +81,7 @@ jobs:
           multi-arch: "all"
   build-16-alpine-316:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -147,6 +149,7 @@ jobs:
           multi-arch: "all"
   build-16-ubuntu-jammy:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -214,6 +217,7 @@ jobs:
           multi-arch: "all"
   build-16-ubuntu-focal:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -281,6 +285,7 @@ jobs:
           multi-arch: "all"
   build-16-debian-bookworm:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -348,6 +353,7 @@ jobs:
           multi-arch: "all"
   build-16-debian-bullseye:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -415,6 +421,7 @@ jobs:
           multi-arch: "all"
   build-16-amazon-linux-2023:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -482,6 +489,7 @@ jobs:
           multi-arch: "all"
   build-16-amazon-linux-2022:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -549,10 +557,21 @@ jobs:
           multi-arch: "all"
   package-16:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     needs: [build-16-alpine-317,build-16-alpine-316,build-16-ubuntu-jammy,build-16-ubuntu-focal,build-16-debian-bookworm,build-16-debian-bullseye,build-16-amazon-linux-2023,build-16-amazon-linux-2022]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Get Version 16
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
       - name: Package Node 16
         run: |
           IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2022" ARCH="amd64" FILE="node-16-amazonlinux-2022-amd64.tar.gz" ./getlayer.sh
@@ -578,6 +597,7 @@ jobs:
             *.tar.gz
   build-18-alpine-317:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -645,6 +665,7 @@ jobs:
           multi-arch: "all"
   build-18-alpine-316:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -712,6 +733,7 @@ jobs:
           multi-arch: "all"
   build-18-ubuntu-jammy:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -779,6 +801,7 @@ jobs:
           multi-arch: "all"
   build-18-ubuntu-focal:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -846,6 +869,7 @@ jobs:
           multi-arch: "all"
   build-18-debian-bookworm:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -913,6 +937,7 @@ jobs:
           multi-arch: "all"
   build-18-debian-bullseye:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -980,6 +1005,7 @@ jobs:
           multi-arch: "all"
   build-18-amazon-linux-2023:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -1047,6 +1073,7 @@ jobs:
           multi-arch: "all"
   build-18-amazon-linux-2022:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -1114,10 +1141,21 @@ jobs:
           multi-arch: "all"
   package-18:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     needs: [build-18-alpine-317,build-18-alpine-316,build-18-ubuntu-jammy,build-18-ubuntu-focal,build-18-debian-bookworm,build-18-debian-bullseye,build-18-amazon-linux-2023,build-18-amazon-linux-2022]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Get Version 18
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
       - name: Package Node 18
         run: |
           IMAGE="truemark/node:beta-${{ env.NODE_VERSION }}-amazonlinux-2022" ARCH="amd64" FILE="node-18-amazonlinux-2022-amd64.tar.gz" ./getlayer.sh

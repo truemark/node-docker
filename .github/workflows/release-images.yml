@@ -16,6 +16,7 @@ permissions:
 jobs:
   build-16-alpine-317:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -45,7 +46,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -90,6 +91,7 @@ jobs:
           multi-arch: "all"
   build-16-alpine-316:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -119,7 +121,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -164,6 +166,7 @@ jobs:
           multi-arch: "all"
   build-16-ubuntu-jammy:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -193,7 +196,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -238,6 +241,7 @@ jobs:
           multi-arch: "all"
   build-16-ubuntu-focal:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -267,7 +271,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -312,6 +316,7 @@ jobs:
           multi-arch: "all"
   build-16-debian-bookworm:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -341,7 +346,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -386,6 +391,7 @@ jobs:
           multi-arch: "all"
   build-16-debian-bullseye:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -415,7 +421,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -460,6 +466,7 @@ jobs:
           multi-arch: "all"
   build-16-amazon-linux-2023:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -489,7 +496,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -534,6 +541,7 @@ jobs:
           multi-arch: "all"
   build-16-amazon-linux-2022:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -563,7 +571,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -608,10 +616,24 @@ jobs:
           multi-arch: "all"
   package-16:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     needs: [build-16-alpine-317,build-16-alpine-316,build-16-ubuntu-jammy,build-16-ubuntu-focal,build-16-debian-bookworm,build-16-debian-bullseye,build-16-amazon-linux-2023,build-16-amazon-linux-2022]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Get Version 16
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+          export TAG_EXISTS=$( curl -sSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_VERSION}\") != null")
+          echo "TAG_EXISTS=${TAG_EXISTS}" >> $GITHUB_ENV
+          echo "Exists: ${TAG_EXISTS}"
       - name: Package
         if: ${{ env.TAG_EXISTS != 'true' }}
         run: |
@@ -633,6 +655,7 @@ jobs:
           IMAGE="truemark/node:${{ env.NODE_VERSION }}-alpine-3.17" ARCH="arm64" FILE="node-16-alpine-3.17-arm64.tar.gz" ./getlayer.sh
   build-18-alpine-317:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -662,7 +685,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -707,6 +730,7 @@ jobs:
           multi-arch: "all"
   build-18-alpine-316:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -736,7 +760,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -781,6 +805,7 @@ jobs:
           multi-arch: "all"
   build-18-ubuntu-jammy:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -810,7 +835,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -855,6 +880,7 @@ jobs:
           multi-arch: "all"
   build-18-ubuntu-focal:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -884,7 +910,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -929,6 +955,7 @@ jobs:
           multi-arch: "all"
   build-18-debian-bookworm:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -958,7 +985,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -1003,6 +1030,7 @@ jobs:
           multi-arch: "all"
   build-18-debian-bullseye:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -1032,7 +1060,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -1077,6 +1105,7 @@ jobs:
           multi-arch: "all"
   build-18-amazon-linux-2023:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -1106,7 +1135,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -1151,6 +1180,7 @@ jobs:
           multi-arch: "all"
   build-18-amazon-linux-2022:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -1180,7 +1210,7 @@ jobs:
           registry-type: public
       - name: Setup Buildx Remote Docker
         id: buildx
-        uses: truemark/aws-buildx-remote-docker-instance-action@v2
+        uses: truemark/aws-buildx-remote-docker-instance-action@v3
         with:
           security-group-id: "${{ vars.SECURITY_GROUP_ID }}"
           subnet-id: "${{ vars.SUBNET_ID }}"
@@ -1225,10 +1255,24 @@ jobs:
           multi-arch: "all"
   package-18:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     needs: [build-18-alpine-317,build-18-alpine-316,build-18-ubuntu-jammy,build-18-ubuntu-focal,build-18-debian-bookworm,build-18-debian-bullseye,build-18-amazon-linux-2023,build-18-amazon-linux-2022]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Get Version 18
+        run: |
+          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${NODE_VERSION}"
+          export TAG_EXISTS=$( curl -sSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_VERSION}\") != null")
+          echo "TAG_EXISTS=${TAG_EXISTS}" >> $GITHUB_ENV
+          echo "Exists: ${TAG_EXISTS}"
       - name: Package
         if: ${{ env.TAG_EXISTS != 'true' }}
         run: |
