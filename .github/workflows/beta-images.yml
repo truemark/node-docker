@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Get Version 16
         run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          export NODE_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
       - name: Login to Docker Hub
@@ -89,7 +89,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Get Version 16
         run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          export NODE_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
       - name: Login to Docker Hub
@@ -159,7 +159,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Get Version 16
         run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          export NODE_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
       - name: Login to Docker Hub
@@ -229,7 +229,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Get Version 16
         run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          export NODE_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
       - name: Login to Docker Hub
@@ -299,7 +299,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Get Version 16
         run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          export NODE_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
       - name: Login to Docker Hub
@@ -369,7 +369,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Get Version 16
         run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          export NODE_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
       - name: Login to Docker Hub
@@ -439,7 +439,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Get Version 16
         run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          export NODE_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
       - name: Login to Docker Hub
@@ -509,7 +509,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Get Version 16
         run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          export NODE_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
       - name: Login to Docker Hub
@@ -585,7 +585,7 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
       - name: Get Version 16
         run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          export NODE_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v16.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
       - name: Package Node 16
@@ -619,7 +619,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Get Version 18
         run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          export NODE_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
       - name: Login to Docker Hub
@@ -689,7 +689,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Get Version 18
         run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          export NODE_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
       - name: Login to Docker Hub
@@ -759,7 +759,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Get Version 18
         run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          export NODE_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
       - name: Login to Docker Hub
@@ -829,7 +829,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Get Version 18
         run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          export NODE_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
       - name: Login to Docker Hub
@@ -899,7 +899,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Get Version 18
         run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          export NODE_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
       - name: Login to Docker Hub
@@ -969,7 +969,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Get Version 18
         run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          export NODE_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
       - name: Login to Docker Hub
@@ -1039,7 +1039,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Get Version 18
         run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          export NODE_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
       - name: Login to Docker Hub
@@ -1109,7 +1109,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Get Version 18
         run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          export NODE_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
       - name: Login to Docker Hub
@@ -1185,7 +1185,7 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
       - name: Get Version 18
         run: |
-          export NODE_VERSION=$(curl -sSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          export NODE_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           echo "Version: ${NODE_VERSION}"
       - name: Package Node 18
