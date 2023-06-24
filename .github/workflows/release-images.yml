@@ -14,6 +14,15 @@ permissions:
   contents: write
 
 jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ssh-key: ${{ secrets.SSH_DEPLOY_KEY }}
+      - name: Keepalive
+        uses: gautamkrishnar/keepalive-workflow@v1
   build-16-alpine-317:
     runs-on: ubuntu-latest
     timeout-minutes: 120
@@ -815,6 +824,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          ssh-key: ${{ secrets.SSH_DEPLOY_KEY }}
       - name: Get Version 18
         run: |
           export NODE_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
@@ -1442,8 +1453,3 @@ jobs:
           release_name: ${{env.NODE_VERSION}}
           tag: ${{env.NODE_VERSION}}
           overwrite: true
-  keepalive:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Keepalive
-        uses: gautamkrishnar/keepalive-workflow@v1
