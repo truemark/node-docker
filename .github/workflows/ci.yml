@@ -62,8 +62,8 @@ jobs:
     if: ${{ needs.prepare.outputs.NODE_18_TAG_EXISTS != 'true' }}
     strategy:
       matrix:
-        os_name: [ "alpine" ]
-        os_version: [ "3.16" ]
+        os_name:    [ "alpine", "alpine", "alpine", "alpine", "alpine" ]
+        os_version: [ "3.16",   "3.17",   "3.18",   "3.19",   "3.20" ]
     with:
       os_name: ${{ matrix.os_name }}
       os_version: ${{ matrix.os_version }}
