@@ -1,0 +1,68 @@
+name: build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  schedule:
+    # Run at 1PM UTC every Monday
+    - cron: '0 13 * * 1'
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+    branches:
+      - main
+
+# https://github.com/gautamkrishnar/keepalive-workflow/discussions/13
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      PREFIX: ${{ steps.set-prefix-release.outputs.PREFIX }}${{ steps.set-prefix-beta.outputs.PREFIX }}
+      ROOT_PREFIX: ${{ steps.set-prefix-release.outputs.ROOT_PREFIX }}${{ steps.set-prefix-beta.outputs.ROOT_PREFIX }}
+    steps:
+        - id: set-prefix-release
+          if: github.ref == 'refs/heads/main'
+          run: |
+            PREFIX=""
+            echo "PREFIX=$PREFIX" >> $GITHUB_OUTPUT
+            ROOT_PREFIX="latest"
+            echo "ROOT_PREFIX=$ROOT_PREFIX" >> $GITHUB_OUTPUT
+        - id: set-prefix-beta
+          if: github.ref != 'refs/heads/main'
+          run: |
+            PREFIX="beta-"
+            echo "PREFIX=$PREFIX" >> $GITHUB_OUTPUT
+            ROOT_PREFIX="beta"
+            echo "ROOT_PREFIX=$ROOT_PREFIX" >> $GITHUB_OUTPUT
+        - id: set-node-versions
+          run: |
+            export NODE_18_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+            echo "NODE_18_VERSION=${NODE_18_VERSION}" >> $GITHUB_ENV
+            echo "Node 18 Version: ${NODE_18_VERSION}"
+            export NODE_20_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v20.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+            echo "NODE_20_VERSION=${NODE_20_VERSION}" >> $GITHUB_ENV
+            echo "Node 20 Version: ${NODE_20_VERSION}"
+  build-20-alpine-316:
+    needs: [prepare]
+    uses: truemark/github-workflows/.github/workflows/docker-buildx.yml@main
+    with:
+      dockerfile: "Dockerfile"
+      images: "truemark/node:${{ needs.prepare.outputs.PREFIX }}${{ env.NODE_20_VERSION }}alpine-3.16-${{github.run_number}},truemark/node:${{ needs.prepare.outputs.PREFIX }}20-alpine-3.16"
+      copy_to_ecr_prefix: "public.ecr.aws/truemark"
+      docker_build_args: '["OS_NAME=alpine", "OS_VERSION=3.16", "NODE_VERSION=${NODE_20_VERSION}"]'
+      security_group_id: ${{ vars.SECURITY_GROUP_ID }}
+      subnet_id: ${{ vars.SUBNET_ID }}
+      instance_profile: ${{ vars.INSTANCE_PROFILE }}
+      region: ${{ vars.AWS_REGION }}
+    secrets:
+      aws_assume_role: ${{ secrets.AWS_ASSUME_ROLE }}
+      docker_hub_username: ${{ secrets.DOCKER_HUB_USERNAME }}
+      docker_hub_password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
