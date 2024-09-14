@@ -5,12 +5,9 @@ on:
     secrets:
       docker_hub_username:
         description: "Docker Hub username"
-        required: false
+        required: true
       docker_hub_password:
         description: "Docker Hub password or token"
-        required: false
-      github_token:
-        description: "GitHub token"
         required: true
     inputs:
       node_version:
@@ -62,7 +59,7 @@ jobs:
       - name: Release
         uses: svenstaro/upload-release-action@v2
         with:
-          repo_token: ${{ secrets.github_token }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           file_glob: true
           file: |
             *.tar.gz
