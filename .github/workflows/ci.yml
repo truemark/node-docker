@@ -56,13 +56,17 @@ jobs:
 # Alpine Linux Builds - https://alpinelinux.org/releases/
 ###############################################################################
 # Alpine Node 18
-  build-18-alpine-316: # 3.16 EOL 2024-05-23
+  build-18:
     needs: [ prepare ]
     uses: './.github/workflows/build.yml'
     if: ${{ needs.prepare.outputs.NODE_18_TAG_EXISTS != 'true' }}
+    strategy:
+      matrix:
+        os_name: [ "alpine" ]
+        os_version: [ "3.16" ]
     with:
-      os_name: "alpine"
-      os_version: "3.16"
+      os_name: ${{ matrix.os_name }}
+      os_version: ${{ matrix.os_version }}
       node_version: "${{ needs.prepare.outputs.NODE_18_VERSION }}"
       security_group_id: ${{ vars.SECURITY_GROUP_ID }}
       subnet_id: ${{ vars.SUBNET_ID }}
