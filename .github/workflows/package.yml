@@ -1,0 +1,88 @@
+name: package
+
+on:
+  workflow_call:
+    secrets:
+      docker_hub_username:
+        description: "Docker Hub username"
+        required: false
+      docker_hub_password:
+        description: "Docker Hub password or token"
+        required: false
+      github_token:
+        description: "GitHub token"
+        required: true
+    inputs:
+      node_version:
+        description: "Node version"
+        required: true
+        type: string
+permissions:
+  contents: write
+  id-token: write
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      NODE_MAJOR_VERSION: ${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}
+    steps:
+      - id: node-major-version
+        run: |
+          NODE_MAJOR_VERSION=$(echo "${{ inputs.node_version }}" | awk -F. '{print $1}')
+          echo "NODE_MAJOR_VERSION=$NODE_MAJOR_VERSION" >> $GITHUB_OUTPUT
+          echo "NODE_MAJOR_VERSION=$NODE_MAJOR_VERSION"
+  package:
+    runs-on: ubuntu-latest
+    needs: [ prepare ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.docker_hub_username }}
+          password: ${{ secrets.docker_hub_password }}
+      - name: Package
+        run: |
+          IMAGE="truemark/node:${{ inputs.node_version }}-alpine-3.16" ARCH="amd64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-alpine-3.16-amd64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-alpine-3.16" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-alpine-3.16-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-alpine-3.17" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-alpine-3.17-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-alpine-3.17" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-alpine-3.17-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-alpine-3.18" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-alpine-3.18-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-alpine-3.18" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-alpine-3.18-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-alpine-3.19" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-alpine-3.19-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-alpine-3.19" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-alpine-3.19-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-alpine-3.20" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-alpine-3.20-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-alpine-3.20" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-alpine-3.20-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-ubuntu-focal" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-ubuntu-focal-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-ubuntu-focal" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-ubuntu-focal-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-ubuntu-jammy" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-ubuntu-jammy-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-ubuntu-jammy" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-ubuntu-jammy-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-ubuntu-noble" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-ubuntu-noble-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-ubuntu-noble" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-ubuntu-noble-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-debian-bullseye" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-debian-bullseye-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-debian-bullseye" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-debian-bullseye-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-debian-bookworm" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-debian-bookworm-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-debian-bookworm" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-debian-bookworm-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-debian-trixie" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-debian-trixie-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-debian-trixie" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-debian-trixie-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-amazonlinux-2022" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-amazonlinux-2022-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-amazonlinux-2022" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-amazonlinux-2022-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-amazonlinux-2023" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-amazonlinux-2023-arm64.tar.gz" ./getlayer.sh
+          IMAGE="truemark/node:${{ inputs.node_version }}-amazonlinux-2023" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }} -amazonlinux-2023-arm64.tar.gz" ./getlayer.sh
+      - name: Upload
+        uses: actions/upload-artifact@v3
+        with:
+          name: files
+          path: |
+            *.tar.gz
+      - name: Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.github_token }}
+          file_glob: true
+          file: |
+            *.tar.gz
+          release_name: ${{ inputs.node_version }}
+          tag: ${{ inputs.node_version }}
+          overwrite: true
