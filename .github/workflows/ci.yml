@@ -62,11 +62,24 @@ jobs:
     if: ${{ needs.prepare.outputs.NODE_18_TAG_EXISTS != 'true' }}
     strategy:
       matrix:
-        os_name:    [ "alpine", "alpine", "alpine", "alpine", "alpine", "ubuntu", "ubuntu", "ubuntu", "debian",   "debian",   "debian", "amazonlinux", "amazonlinux" ]
-        os_version: [ "3.16",   "3.17",   "3.18",   "3.19",   "3.20",   "focal",  "jammy",  "noble",  "bullseye", "bookworm", "trixie", "2022",        "2023" ]
+        os: [
+          { name: "alpine", version: "3.16" },
+          { name: "alpine", version: "3.17" },
+          { name: "alpine", version: "3.18" },
+          { name: "alpine", version: "3.19" },
+          { name: "alpine", version: "3.20" },
+          { name: "ubuntu", version: "focal" },
+          { name: "ubuntu", version: "jammy" },
+          { name: "ubuntu", version: "noble" },
+          { name: "debian", version: "bullseye" },
+          { name: "debian", version: "bookworm" },
+          { name: "debian", version: "trixie" },
+          { name: "amazonlinux", version: "2022" },
+          { name: "amazonlinux", version: "2023" }
+        ]
     with:
-      os_name: ${{ matrix.os_name }}
-      os_version: ${{ matrix.os_version }}
+      os_name: ${{ matrix.os.name }}
+      os_version: ${{ matrix.os.version }}
       node_version: "${{ needs.prepare.outputs.NODE_18_VERSION }}"
       security_group_id: ${{ vars.SECURITY_GROUP_ID }}
       subnet_id: ${{ vars.SUBNET_ID }}
