@@ -73,7 +73,7 @@ jobs:
           NODE_MAJOR_VERSION=$(echo "${{ inputs.node_version }}" | awk -F. '{print $1}')
           echo "NODE_MAJOR_VERSION=$NODE_MAJOR_VERSION" >> $GITHUB_OUTPUT
           echo "NODE_MAJOR_VERSION=$NODE_MAJOR_VERSION"
-  build-image:
+  build:
     needs: [ prepare ]
     uses: truemark/github-workflows/.github/workflows/docker-buildx.yml@main
     with:
