@@ -28,7 +28,11 @@ jobs:
       PREFIX: ${{ steps.set-prefix-release.outputs.PREFIX }}${{ steps.set-prefix-beta.outputs.PREFIX }}
       ROOT_PREFIX: ${{ steps.set-prefix-release.outputs.ROOT_PREFIX }}${{ steps.set-prefix-beta.outputs.ROOT_PREFIX }}
       NODE_18_VERSION: ${{ steps.set-node-versions.outputs.NODE_18_VERSION }}
+      NODE_18_TAG_EXISTS: ${{ steps.set-node-versions.outputs.NODE_18_TAG_EXISTS }}
       NODE_20_VERSION: ${{ steps.set-node-versions.outputs.NODE_20_VERSION }}
+      NODE_20_TAG_EXISTS: ${{ steps.set-node-versions.outputs.NODE_20_TAG_EXISTS }}
+      NODE_22_VERSION: ${{ steps.set-node-versions.outputs.NODE_22_VERSION }}
+      NODE_22_TAG_EXISTS: ${{ steps.set-node-versions.outputs.NODE_22_TAG_EXISTS }}
     steps:
         - id: set-prefix-release
           if: github.ref == 'refs/heads/main'
@@ -48,18 +52,35 @@ jobs:
           run: |
             export NODE_18_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
             echo "NODE_18_VERSION=${NODE_18_VERSION}" >> $GITHUB_OUTPUT
-            echo "Node 18 Version: ${NODE_18_VERSION}"
+            echo "NODE_18_VERSION=${NODE_18_VERSION}"
+            export NODE_18_TAG_EXISTS=$( curl -fsSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_18_VERSION}\") != null")
+            echo "NODE_18_TAG_EXISTS=${NODE_18_TAG_EXISTS}" >> $GITHUB_OUTPUT
+            echo "NODE_18_TAG_EXISTS=${NODE_18_TAG_EXISTS}"
             export NODE_20_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v20.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
             echo "NODE_20_VERSION=${NODE_20_VERSION}" >> $GITHUB_OUTPUT
-            echo "Node 20 Version: ${NODE_20_VERSION}"
-  build-20-alpine-316:
-    needs: [prepare]
+            echo "NODE_20_VERSION=${NODE_20_VERSION}"
+            export NODE_20_TAG_EXISTS=$( curl -fsSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_20_VERSION}\") != null")
+            echo "NODE_20_TAG_EXISTS=${NODE_20_TAG_EXISTS}" >> $GITHUB_OUTPUT
+            echo "NODE_20_TAG_EXISTS=${NODE_20_TAG_EXISTS}"
+            export NODE_22_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v22.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+            echo "NODE_22_VERSION=${NODE_22_VERSION}" >> $GITHUB_OUTPUT
+            echo "NODE_22_VERSION=${NODE_22_VERSION}"
+            export NODE_22_TAG_EXISTS=$( curl -fsSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_22_VERSION}\") != null")
+            echo "NODE_22_TAG_EXISTS=${NODE_22_TAG_EXISTS}" >> $GITHUB_OUTPUT
+            echo "NODE_22_TAG_EXISTS=${NODE_22_TAG_EXISTS}"
+###############################################################################
+# Alpine Linux Builds - https://alpinelinux.org/releases/
+###############################################################################
+# Alpine Node 18
+  build-18-alpine-316: # 3.16 EOL 2024-05-23
+    if: ${{ needs.prepare.outputs.NODE_18_TAG_EXISTS != 'true' }}
+    needs: [ prepare ]
     uses: truemark/github-workflows/.github/workflows/docker-buildx.yml@develop
     with:
       dockerfile: "Dockerfile"
-      images: "truemark/node:${{ needs.prepare.outputs.PREFIX }}${{ needs.prepare.outputs.NODE_20_VERSION }}alpine-3.16-${{github.run_number}},truemark/node:${{ needs.prepare.outputs.PREFIX }}20-alpine-3.16"
+      images: "truemark/node:${{ needs.prepare.outputs.PREFIX }}${{ needs.prepare.outputs.NODE_18_VERSION }}alpine-3.16,truemark/node:${{ needs.prepare.outputs.PREFIX }}18-alpine-3.16"
       copy_to_ecr_prefix: "public.ecr.aws/truemark"
-      docker_build_args: '["OS_NAME=alpine", "OS_VERSION=3.16", "NODE_VERSION=${{ needs.prepare.outputs.NODE_20_VERSION }}"]'
+      docker_build_args: '["OS_NAME=alpine", "OS_VERSION=3.16", "NODE_VERSION=${{ needs.prepare.outputs.NODE_18_VERSION }}"]'
       security_group_id: ${{ vars.SECURITY_GROUP_ID }}
       subnet_id: ${{ vars.SUBNET_ID }}
       instance_profile: ${{ vars.INSTANCE_PROFILE }}
