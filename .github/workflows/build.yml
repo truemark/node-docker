@@ -54,7 +54,7 @@ jobs:
             echo "Node 20 Version: ${NODE_20_VERSION}"
   build-20-alpine-316:
     needs: [prepare]
-    uses: truemark/github-workflows/.github/workflows/docker-buildx.yml@main
+    uses: truemark/github-workflows/.github/workflows/docker-buildx.yml@develop
     with:
       dockerfile: "Dockerfile"
       images: "truemark/node:${{ needs.prepare.outputs.PREFIX }}${{ needs.prepare.outputs.NODE_20_VERSION }}alpine-3.16-${{github.run_number}},truemark/node:${{ needs.prepare.outputs.PREFIX }}20-alpine-3.16"
