@@ -22,63 +22,48 @@ permissions:
   contents: write
 
 jobs:
-#  prepare:
-#    runs-on: ubuntu-latest
-#    outputs:
-#      PREFIX: ${{ steps.set-prefix-release.outputs.PREFIX }}${{ steps.set-prefix-beta.outputs.PREFIX }}
-#      ROOT_PREFIX: ${{ steps.set-prefix-release.outputs.ROOT_PREFIX }}${{ steps.set-prefix-beta.outputs.ROOT_PREFIX }}
-#      NODE_18_VERSION: ${{ steps.set-node-versions.outputs.NODE_18_VERSION }}
-#      NODE_18_TAG_EXISTS: ${{ steps.set-node-versions.outputs.NODE_18_TAG_EXISTS }}
-#      NODE_20_VERSION: ${{ steps.set-node-versions.outputs.NODE_20_VERSION }}
-#      NODE_20_TAG_EXISTS: ${{ steps.set-node-versions.outputs.NODE_20_TAG_EXISTS }}
-#      NODE_22_VERSION: ${{ steps.set-node-versions.outputs.NODE_22_VERSION }}
-#      NODE_22_TAG_EXISTS: ${{ steps.set-node-versions.outputs.NODE_22_TAG_EXISTS }}
-#    steps:
-#        - id: set-prefix-release
-#          if: github.ref == 'refs/heads/main'
-#          run: |
-#            PREFIX=""
-#            echo "PREFIX=$PREFIX" >> $GITHUB_OUTPUT
-#            ROOT_PREFIX="latest"
-#            echo "ROOT_PREFIX=$ROOT_PREFIX" >> $GITHUB_OUTPUT
-#        - id: set-prefix-beta
-#          if: github.ref != 'refs/heads/main'
-#          run: |
-#            PREFIX="beta-"
-#            echo "PREFIX=$PREFIX" >> $GITHUB_OUTPUT
-#            ROOT_PREFIX="beta"
-#            echo "ROOT_PREFIX=$ROOT_PREFIX" >> $GITHUB_OUTPUT
-#        - id: set-node-versions
-#          run: |
-#            export NODE_18_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
-#            echo "NODE_18_VERSION=${NODE_18_VERSION}" >> $GITHUB_OUTPUT
-#            echo "NODE_18_VERSION=${NODE_18_VERSION}"
-#            export NODE_18_TAG_EXISTS=$( curl -fsSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_18_VERSION}\") != null")
-#            echo "NODE_18_TAG_EXISTS=${NODE_18_TAG_EXISTS}" >> $GITHUB_OUTPUT
-#            echo "NODE_18_TAG_EXISTS=${NODE_18_TAG_EXISTS}"
-#            export NODE_20_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v20.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
-#            echo "NODE_20_VERSION=${NODE_20_VERSION}" >> $GITHUB_OUTPUT
-#            echo "NODE_20_VERSION=${NODE_20_VERSION}"
-#            export NODE_20_TAG_EXISTS=$( curl -fsSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_20_VERSION}\") != null")
-#            echo "NODE_20_TAG_EXISTS=${NODE_20_TAG_EXISTS}" >> $GITHUB_OUTPUT
-#            echo "NODE_20_TAG_EXISTS=${NODE_20_TAG_EXISTS}"
-#            export NODE_22_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v22.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
-#            echo "NODE_22_VERSION=${NODE_22_VERSION}" >> $GITHUB_OUTPUT
-#            echo "NODE_22_VERSION=${NODE_22_VERSION}"
-#            export NODE_22_TAG_EXISTS=$( curl -fsSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_22_VERSION}\") != null")
-#            echo "NODE_22_TAG_EXISTS=${NODE_22_TAG_EXISTS}" >> $GITHUB_OUTPUT
-#            echo "NODE_22_TAG_EXISTS=${NODE_22_TAG_EXISTS}"
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      NODE_18_VERSION: ${{ steps.set-node-versions.outputs.NODE_18_VERSION }}
+      NODE_18_TAG_EXISTS: ${{ steps.set-node-versions.outputs.NODE_18_TAG_EXISTS }}
+      NODE_20_VERSION: ${{ steps.set-node-versions.outputs.NODE_20_VERSION }}
+      NODE_20_TAG_EXISTS: ${{ steps.set-node-versions.outputs.NODE_20_TAG_EXISTS }}
+      NODE_22_VERSION: ${{ steps.set-node-versions.outputs.NODE_22_VERSION }}
+      NODE_22_TAG_EXISTS: ${{ steps.set-node-versions.outputs.NODE_22_TAG_EXISTS }}
+    steps:
+        - id: set-node-versions
+          run: |
+            export NODE_18_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v18.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+            echo "NODE_18_VERSION=${NODE_18_VERSION}" >> $GITHUB_OUTPUT
+            echo "NODE_18_VERSION=${NODE_18_VERSION}"
+            export NODE_18_TAG_EXISTS=$( curl -fsSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_18_VERSION}\") != null")
+            echo "NODE_18_TAG_EXISTS=${NODE_18_TAG_EXISTS}" >> $GITHUB_OUTPUT
+            echo "NODE_18_TAG_EXISTS=${NODE_18_TAG_EXISTS}"
+            export NODE_20_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v20.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+            echo "NODE_20_VERSION=${NODE_20_VERSION}" >> $GITHUB_OUTPUT
+            echo "NODE_20_VERSION=${NODE_20_VERSION}"
+            export NODE_20_TAG_EXISTS=$( curl -fsSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_20_VERSION}\") != null")
+            echo "NODE_20_TAG_EXISTS=${NODE_20_TAG_EXISTS}" >> $GITHUB_OUTPUT
+            echo "NODE_20_TAG_EXISTS=${NODE_20_TAG_EXISTS}"
+            export NODE_22_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v22.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+            echo "NODE_22_VERSION=${NODE_22_VERSION}" >> $GITHUB_OUTPUT
+            echo "NODE_22_VERSION=${NODE_22_VERSION}"
+            export NODE_22_TAG_EXISTS=$( curl -fsSL https://api.github.com/repos/truemark/node-docker/tags | jq -r "[.[].name] | index(\"${NODE_22_VERSION}\") != null")
+            echo "NODE_22_TAG_EXISTS=${NODE_22_TAG_EXISTS}" >> $GITHUB_OUTPUT
+            echo "NODE_22_TAG_EXISTS=${NODE_22_TAG_EXISTS}"
 ###############################################################################
 # Alpine Linux Builds - https://alpinelinux.org/releases/
 ###############################################################################
 # Alpine Node 18
   build-18-alpine-316: # 3.16 EOL 2024-05-23
+    needs: [ prepare ]
     uses: './.github/workflows/build.yml'
-    # if: ${{ needs.prepare.outputs.NODE_18_TAG_EXISTS != 'true' }}
+    if: ${{ needs.prepare.outputs.NODE_18_TAG_EXISTS != 'true' }}
     with:
       os_name: "alpine"
       os_version: "3.16"
-      node_version: "18"
+      node_version: "${{ needs.prepare.outputs.NODE_18_VERSION }}"
       security_group_id: ${{ vars.SECURITY_GROUP_ID }}
       subnet_id: ${{ vars.SUBNET_ID }}
       instance_profile: ${{ vars.INSTANCE_PROFILE }}
@@ -87,7 +72,7 @@ jobs:
       aws_assume_role: ${{ secrets.AWS_ASSUME_ROLE }}
       docker_hub_username: ${{ secrets.DOCKER_HUB_USERNAME }}
       docker_hub_password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-  #    needs: [ prepare ]
+
 #    uses: truemark/github-workflows/.github/workflows/docker-buildx.yml@develop
 #    with:
 #      dockerfile: "Dockerfile"

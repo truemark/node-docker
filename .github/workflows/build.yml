@@ -48,15 +48,10 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      NODE_VERSION: ${{ steps.set-node-version.outputs.NODE_VERSION }}
       PREFIX: ${{ steps.set-prefix-release.outputs.PREFIX }}${{ steps.set-prefix-beta.outputs.PREFIX }}
       ROOT_PREFIX: ${{ steps.set-prefix-release.outputs.ROOT_PREFIX }}${{ steps.set-prefix-beta.outputs.ROOT_PREFIX }}
+      NODE_MAJOR_VERSION: ${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}
     steps:
-      - id: set-node-version
-        run: |
-          export NODE_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v${{ inputs.node_version }}.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
-          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_OUTPUT
-          echo "NODE_VERSION=${NODE_VERSION}"
       - id: set-prefix-release
         if: github.ref == 'refs/heads/main'
         run: |
@@ -64,6 +59,7 @@ jobs:
           echo "PREFIX=$PREFIX" >> $GITHUB_OUTPUT
           ROOT_PREFIX="latest"
           echo "ROOT_PREFIX=$ROOT_PREFIX" >> $GITHUB_OUTPUT
+          echo "ROOT_PREFIX=$ROOT_PREFIX"
       - id: set-prefix-beta
         if: github.ref != 'refs/heads/main'
         run: |
@@ -71,14 +67,20 @@ jobs:
           echo "PREFIX=$PREFIX" >> $GITHUB_OUTPUT
           ROOT_PREFIX="beta"
           echo "ROOT_PREFIX=$ROOT_PREFIX" >> $GITHUB_OUTPUT
+          echo "ROOT_PREFIX=$ROOT_PREFIX"
+      - id: node-major-version
+        run: |
+          NODE_MAJOR_VERSION=$(echo "${{ inputs.node_version }}" | awk -F. '{print $1}')
+          echo "NODE_MAJOR_VERSION=$NODE_MAJOR_VERSION" >> $GITHUB_OUTPUT
+          echo "NODE_MAJOR_VERSION=$NODE_MAJOR_VERSION"
   build-image:
     needs: [ prepare ]
     uses: truemark/github-workflows/.github/workflows/docker-buildx.yml@main
     with:
       dockerfile: "Dockerfile"
-      images: "truemark/node:${{ needs.prepare.outputs.PREFIX }}${{ needs.prepare.outputs.NODE_VERSION }}${{ inputs.os_name }}-${{ inputs.os_version }},truemark/node:${{ needs.prepare.outputs.PREFIX }}${{ inputs.node_version }}-${{ inputs.os_name }}-${{ inputs.os_version }}"
+      images: "truemark/node:${{ needs.prepare.outputs.PREFIX }}${{ inputs.node_version }}${{ inputs.os_name }}-${{ inputs.os_version }},truemark/node:${{ needs.prepare.outputs.PREFIX }}${{ needs.prepare.outputs.NODE_MAJOR_VERSION }}-${{ inputs.os_name }}-${{ inputs.os_version }}"
       copy_to_ecr_prefix: "public.ecr.aws/truemark"
-      docker_build_args: '["OS_NAME=${{ inputs.os_name }}", "OS_VERSION=${{ inputs.os_version }}", "NODE_VERSION=${{ needs.prepare.outputs.NODE_VERSION }}"]'
+      docker_build_args: '["OS_NAME=${{ inputs.os_name }}", "OS_VERSION=${{ inputs.os_version }}", "NODE_VERSION=${{ inputs.node_version }}"]'
       security_group_id: ${{ inputs.security_group_id }}
       subnet_id: ${{ inputs.subnet_id }}
       instance_profile: ${{ inputs.instance_profile }}
