@@ -110,7 +110,7 @@ jobs:
     strategy:
       matrix:
         os: [
-          { name: "alpine", version: "3.16" },
+#          { name: "alpine", version: "3.16" }, // EOL'd
           { name: "alpine", version: "3.17" },
           { name: "alpine", version: "3.18" },
           { name: "alpine", version: "3.19" },
@@ -142,7 +142,7 @@ jobs:
     if: ${{ needs.prepare.outputs.NODE_20_TAG_EXISTS != 'true' && github.ref == 'refs/heads/main' }}
     with:
       node_version: "${{ needs.prepare.outputs.NODE_20_VERSION }}"
-      os_versions: "alpine-3.16 alpine-3.17 alpine-3.18 alpine-3.19 alpine-3.20 ubuntu-focal ubuntu-jammy ubuntu-noble debian-bullseye debian-bookworm debian-trixie amazonlinux-2022 amazonlinux-2023"
+      os_versions: "alpine-3.17 alpine-3.18 alpine-3.19 alpine-3.20 ubuntu-focal ubuntu-jammy ubuntu-noble debian-bullseye debian-bookworm debian-trixie amazonlinux-2022 amazonlinux-2023"
     secrets:
       docker_hub_username: ${{ secrets.DOCKER_HUB_USERNAME }}
       docker_hub_password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
@@ -157,11 +157,12 @@ jobs:
     strategy:
       matrix:
         os: [
-          { name: "alpine", version: "3.16" },
+#          { name: "alpine", version: "3.16" }, EOL'd
           { name: "alpine", version: "3.17" },
           { name: "alpine", version: "3.18" },
           { name: "alpine", version: "3.19" },
           { name: "alpine", version: "3.20" },
+#          { name: "ubuntu", version: "focal" }, Doesn't work with Node 22
           { name: "ubuntu", version: "jammy" },
           { name: "ubuntu", version: "noble" },
           { name: "debian", version: "bullseye" },
@@ -188,7 +189,7 @@ jobs:
     if: ${{ needs.prepare.outputs.NODE_22_TAG_EXISTS != 'true' && github.ref == 'refs/heads/main' }}
     with:
       node_version: "${{ needs.prepare.outputs.NODE_22_VERSION }}"
-      os_versions: "alpine-3.16 alpine-3.17 alpine-3.18 alpine-3.19 alpine-3.20 ubuntu-jammy ubuntu-noble debian-bullseye debian-bookworm debian-trixie amazonlinux-2022 amazonlinux-2023"
+      os_versions: "alpine-3.17 alpine-3.18 alpine-3.19 alpine-3.20 ubuntu-jammy ubuntu-noble debian-bullseye debian-bookworm debian-trixie amazonlinux-2022 amazonlinux-2023"
     secrets:
       docker_hub_username: ${{ secrets.DOCKER_HUB_USERNAME }}
       docker_hub_password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
