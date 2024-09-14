@@ -67,13 +67,13 @@ jobs:
           { name: "alpine", version: "3.17" },
           { name: "alpine", version: "3.18" },
           { name: "alpine", version: "3.19" },
-          { name: "alpine", version: "3.20" },
+          # { name: "alpine", version: "3.20" }, Doesn't work with Node 18
           { name: "ubuntu", version: "focal" },
           { name: "ubuntu", version: "jammy" },
-          { name: "ubuntu", version: "noble" },
+          # { name: "ubuntu", version: "noble" }, Doesn't work with Node 18
           { name: "debian", version: "bullseye" },
           { name: "debian", version: "bookworm" },
-          { name: "debian", version: "trixie" },
+          # { name: "debian", version: "trixie" }, Doesn't work with Node 18
           { name: "amazonlinux", version: "2022" },
           { name: "amazonlinux", version: "2023" }
         ]
@@ -103,7 +103,93 @@ jobs:
 ###############################################################################
 # Node 20
 ###############################################################################
+  build-20:
+    needs: [ prepare ]
+    uses: './.github/workflows/build.yml'
+    if: ${{ needs.prepare.outputs.NODE_20_TAG_EXISTS != 'true' }}
+    strategy:
+      matrix:
+        os: [
+          { name: "alpine", version: "3.16" },
+          { name: "alpine", version: "3.17" },
+          { name: "alpine", version: "3.18" },
+          { name: "alpine", version: "3.19" },
+          { name: "alpine", version: "3.20" },
+          { name: "ubuntu", version: "focal" },
+          { name: "ubuntu", version: "jammy" },
+          { name: "ubuntu", version: "noble" },
+          { name: "debian", version: "bullseye" },
+          { name: "debian", version: "bookworm" },
+          { name: "debian", version: "trixie" },
+          { name: "amazonlinux", version: "2022" },
+          { name: "amazonlinux", version: "2023" }
+        ]
+    with:
+      os_name: ${{ matrix.os.name }}
+      os_version: ${{ matrix.os.version }}
+      node_version: "${{ needs.prepare.outputs.NODE_20_VERSION }}"
+      security_group_id: ${{ vars.SECURITY_GROUP_ID }}
+      subnet_id: ${{ vars.SUBNET_ID }}
+      instance_profile: ${{ vars.INSTANCE_PROFILE }}
+      region: ${{ vars.AWS_REGION }}
+    secrets:
+      aws_assume_role: ${{ secrets.AWS_ASSUME_ROLE }}
+      docker_hub_username: ${{ secrets.DOCKER_HUB_USERNAME }}
+      docker_hub_password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+  package-20:
+    needs: [ prepare, build-20 ]
+    uses: './.github/workflows/package.yml'
+    if: ${{ needs.prepare.outputs.NODE_20_TAG_EXISTS != 'true' && github.ref == 'refs/heads/main' }}
+    with:
+      node_version: "${{ needs.prepare.outputs.NODE_20_VERSION }}"
+    secrets:
+      docker_hub_username: ${{ secrets.DOCKER_HUB_USERNAME }}
+      docker_hub_password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      github_token: ${{ secrets.GITHUB_TOKEN }}
 
 ###############################################################################
 # Node 22
 ###############################################################################
+  build-22:
+    needs: [ prepare ]
+    uses: './.github/workflows/build.yml'
+    if: ${{ needs.prepare.outputs.NODE_22_TAG_EXISTS != 'true' }}
+    strategy:
+      matrix:
+        os: [
+          { name: "alpine", version: "3.16" },
+          { name: "alpine", version: "3.17" },
+          { name: "alpine", version: "3.18" },
+          { name: "alpine", version: "3.19" },
+          { name: "alpine", version: "3.20" },
+          { name: "ubuntu", version: "focal" },
+          { name: "ubuntu", version: "jammy" },
+          { name: "ubuntu", version: "noble" },
+          { name: "debian", version: "bullseye" },
+          { name: "debian", version: "bookworm" },
+          { name: "debian", version: "trixie" },
+          { name: "amazonlinux", version: "2022" },
+          { name: "amazonlinux", version: "2023" }
+        ]
+    with:
+      os_name: ${{ matrix.os.name }}
+      os_version: ${{ matrix.os.version }}
+      node_version: "${{ needs.prepare.outputs.NODE_22_VERSION }}"
+      security_group_id: ${{ vars.SECURITY_GROUP_ID }}
+      subnet_id: ${{ vars.SUBNET_ID }}
+      instance_profile: ${{ vars.INSTANCE_PROFILE }}
+      region: ${{ vars.AWS_REGION }}
+    secrets:
+      aws_assume_role: ${{ secrets.AWS_ASSUME_ROLE }}
+      docker_hub_username: ${{ secrets.DOCKER_HUB_USERNAME }}
+      docker_hub_password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+  package-22:
+    needs: [ prepare, build-22 ]
+    uses: './.github/workflows/package.yml'
+    if: ${{ needs.prepare.outputs.NODE_22_TAG_EXISTS != 'true' && github.ref == 'refs/heads/main' }}
+    with:
+      node_version: "${{ needs.prepare.outputs.NODE_22_VERSION }}"
+    secrets:
+      docker_hub_username: ${{ secrets.DOCKER_HUB_USERNAME }}
+      docker_hub_password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      github_token: ${{ secrets.GITHUB_TOKEN }}
