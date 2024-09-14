@@ -48,38 +48,11 @@ jobs:
           password: ${{ secrets.docker_hub_password }}
       - name: Package
         run: |
-#          declare -a OS_LIST=("alpine-3.16" "alpine-3.17" "alpine-3.18" "alpine-3.19" "alpine-3.20" "ubuntu-focal" "ubuntu-jammy" "ubuntu-noble" "debian-bullseye" "debian-bookworm" "debian-trixie" "amazonlinux-2022" "amazonlinux-2023")
           declare -a OS_LIST=$(echo ${{ inputs.os_versions }})
           for OS in ${OS_LIST[@]}; do
           IMAGE="truemark/node:${{ inputs.node_version }}-$OS" ARCH="amd64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-$OS-amd64.tar.gz" ./getlayer.sh
           IMAGE="truemark/node:${{ inputs.node_version }}-$OS" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-$OS-arm64.tar.gz" ./getlayer.sh
           done
-#          IMAGE="truemark/node:${{ inputs.node_version }}-alpine-3.16" ARCH="amd64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-alpine-3.16-amd64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-alpine-3.16" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-alpine-3.16-arm64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-alpine-3.17" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-alpine-3.17-arm64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-alpine-3.17" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-alpine-3.17-arm64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-alpine-3.18" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-alpine-3.18-arm64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-alpine-3.18" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-alpine-3.18-arm64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-alpine-3.19" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-alpine-3.19-arm64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-alpine-3.19" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-alpine-3.19-arm64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-alpine-3.20" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-alpine-3.20-arm64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-alpine-3.20" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-alpine-3.20-arm64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-ubuntu-focal" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-ubuntu-focal-arm64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-ubuntu-focal" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-ubuntu-focal-arm64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-ubuntu-jammy" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-ubuntu-jammy-arm64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-ubuntu-jammy" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-ubuntu-jammy-arm64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-ubuntu-noble" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-ubuntu-noble-arm64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-ubuntu-noble" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-ubuntu-noble-arm64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-debian-bullseye" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-debian-bullseye-arm64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-debian-bullseye" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-debian-bullseye-arm64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-debian-bookworm" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-debian-bookworm-arm64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-debian-bookworm" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-debian-bookworm-arm64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-debian-trixie" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-debian-trixie-arm64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-debian-trixie" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-debian-trixie-arm64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-amazonlinux-2022" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-amazonlinux-2022-arm64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-amazonlinux-2022" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-amazonlinux-2022-arm64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-amazonlinux-2023" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}-amazonlinux-2023-arm64.tar.gz" ./getlayer.sh
-#          IMAGE="truemark/node:${{ inputs.node_version }}-amazonlinux-2023" ARCH="arm64" FILE="node-${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }} -amazonlinux-2023-arm64.tar.gz" ./getlayer.sh
       - name: Upload
         uses: actions/upload-artifact@v3
         with:
