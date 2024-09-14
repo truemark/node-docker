@@ -1,0 +1,89 @@
+on:
+  workflow_call:
+    secrets:
+      docker_hub_username:
+        description: "Docker Hub username"
+        required: false
+      docker_hub_password:
+        description: "Docker Hub password or token"
+        required: false
+      aws_assume_role:
+        description: "AWS role to assume"
+        required: false
+    inputs:
+      node_version:
+        description: "Node version"
+        required: true
+        type: string
+      os_name:
+        description: "OS name"
+        required: true
+        type: string
+      os_version:
+        description: "OS version"
+        required: true
+        type: string
+      security_group_id:
+        description: "Security Group ID"
+        required: true
+        type: string
+      subnet_id:
+        description: "Subnet ID"
+        required: true
+        type: string
+      instance_profile:
+        description: "Instance Profile"
+        required: true
+        type: string
+      region:
+        description: "Region"
+        required: true
+        type: string
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      NODE_VERSION: ${{ steps.set-node-version.outputs.NODE_VERSION }}
+      PREFIX: ${{ steps.set-prefix-release.outputs.PREFIX }}${{ steps.set-prefix-beta.outputs.PREFIX }}
+      ROOT_PREFIX: ${{ steps.set-prefix-release.outputs.ROOT_PREFIX }}${{ steps.set-prefix-beta.outputs.ROOT_PREFIX }}
+    steps:
+      - id: set-node-version
+        run: |
+          export NODE_VERSION=$(curl -fsSL https://nodejs.org/dist/latest-v${{ inputs.node_version }}.x/ | grep linux-x64.tar.gz | sed -n "s/.*>node-v\(.*\)-linux.*<.*/\1/p")
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_OUTPUT
+          echo "NODE_VERSION=${NODE_VERSION}"
+      - id: set-prefix-release
+        if: github.ref == 'refs/heads/main'
+        run: |
+          PREFIX=""
+          echo "PREFIX=$PREFIX" >> $GITHUB_OUTPUT
+          ROOT_PREFIX="latest"
+          echo "ROOT_PREFIX=$ROOT_PREFIX" >> $GITHUB_OUTPUT
+      - id: set-prefix-beta
+        if: github.ref != 'refs/heads/main'
+        run: |
+          PREFIX="beta-"
+          echo "PREFIX=$PREFIX" >> $GITHUB_OUTPUT
+          ROOT_PREFIX="beta"
+          echo "ROOT_PREFIX=$ROOT_PREFIX" >> $GITHUB_OUTPUT
+  build-image:
+    needs: [ prepare ]
+    uses: truemark/github-workflows/.github/workflows/docker-buildx.yml@main
+    with:
+      dockerfile: "Dockerfile"
+      images: "truemark/node:${{ needs.prepare.outputs.PREFIX }}${{ needs.prepare.outputs.NODE_VERSION }}${{ inputs.os_name }}-${{ inputs.os_version }},truemark/node:${{ needs.prepare.outputs.PREFIX }}${{ inputs.node_version }}-${{ inputs.os_name }}-${{ inputs.os_version }}"
+      copy_to_ecr_prefix: "public.ecr.aws/truemark"
+      docker_build_args: '["OS_NAME=${{ inputs.os_name }}", "OS_VERSION=${{ inputs.os_version }}", "NODE_VERSION=${{ needs.prepare.outputs.NODE_VERSION }}"]'
+      security_group_id: ${{ inputs.security_group_id }}
+      subnet_id: ${{ inputs.subnet_id }}
+      instance_profile: ${{ inputs.instance_profile }}
+      region: ${{ inputs.region }}
+      use_remote: true
+    secrets:
+      aws_assume_role: ${{ secrets.aws_assume_role }}
+      docker_hub_username: ${{ secrets.docker_hub_username }}
+      docker_hub_password: ${{ secrets.docker_hub_password }}
