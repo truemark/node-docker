@@ -49,7 +49,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       PREFIX: ${{ steps.set-prefix-release.outputs.PREFIX }}${{ steps.set-prefix-beta.outputs.PREFIX }}
-      ROOT_PREFIX: ${{ steps.set-prefix-release.outputs.ROOT_PREFIX }}${{ steps.set-prefix-beta.outputs.ROOT_PREFIX }}
       NODE_MAJOR_VERSION: ${{ steps.set-node-major-version.outputs.NODE_MAJOR_VERSION }}
     steps:
       - id: set-prefix-release
@@ -57,18 +56,12 @@ jobs:
         run: |
           PREFIX=""
           echo "PREFIX=$PREFIX" >> $GITHUB_OUTPUT
-          ROOT_PREFIX="latest"
-          echo "ROOT_PREFIX=$ROOT_PREFIX" >> $GITHUB_OUTPUT
-          echo "ROOT_PREFIX=$ROOT_PREFIX"
       - id: set-prefix-beta
         if: github.ref != 'refs/heads/main'
         run: |
           PREFIX="beta-"
           echo "PREFIX=$PREFIX" >> $GITHUB_OUTPUT
-          ROOT_PREFIX="beta"
-          echo "ROOT_PREFIX=$ROOT_PREFIX" >> $GITHUB_OUTPUT
-          echo "ROOT_PREFIX=$ROOT_PREFIX"
-      - id: node-major-version
+      - id: set-node-major-version
         run: |
           NODE_MAJOR_VERSION=$(echo "${{ inputs.node_version }}" | awk -F. '{print $1}')
           echo "NODE_MAJOR_VERSION=$NODE_MAJOR_VERSION" >> $GITHUB_OUTPUT
