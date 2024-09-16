@@ -71,7 +71,7 @@ jobs:
     uses: truemark/github-workflows/.github/workflows/docker-buildx.yml@main
     with:
       dockerfile: "Dockerfile"
-      images: "truemark/node:${{ needs.prepare.outputs.PREFIX }}${{ inputs.node_version }}${{ inputs.os_name }}-${{ inputs.os_version }},truemark/node:${{ needs.prepare.outputs.PREFIX }}${{ needs.prepare.outputs.NODE_MAJOR_VERSION }}-${{ inputs.os_name }}-${{ inputs.os_version }}"
+      images: "truemark/node:${{ needs.prepare.outputs.PREFIX }}${{ inputs.node_version }}-${{ inputs.os_name }}-${{ inputs.os_version }},truemark/node:${{ needs.prepare.outputs.PREFIX }}${{ needs.prepare.outputs.NODE_MAJOR_VERSION }}-${{ inputs.os_name }}-${{ inputs.os_version }}"
       copy_to_ecr_prefix: "public.ecr.aws/truemark"
       docker_build_args: '["OS_NAME=${{ inputs.os_name }}", "OS_VERSION=${{ inputs.os_version }}", "NODE_VERSION=${{ inputs.node_version }}"]'
       security_group_id: ${{ inputs.security_group_id }}
